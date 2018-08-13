@@ -13,6 +13,7 @@
           value="true"
           v-for="(item, i) in items"
           :key="i"
+          @click="$router.push(item.route)"
         >
           <v-list-tile-action>
             <v-icon v-html="item.icon"></v-icon>
@@ -34,28 +35,46 @@
 </template>
 <style scoped>
 .v-toolbar__side-icon {
-  margin-left: 6px!important;
+  margin-left: 6px !important;
+}
+.v-list__tile__title {
+  text-align: right;
 }
 </style>
 
 <script>
-
+import ApiConsumer from './mixins/apiconsumer.mixin';
 export default {
-  name: 'App',
-  data () {
-    return {
-      drawer: true,
-      items: [{
-        icon: 'bubble_chart',
-        title: 'Inspire'
-      }],
-      right: true,
-      displayFrame: true,
-      title: 'בנקיימא'
+  name: "App",
+  computed: {
+    displayFrame() {
+      return this.$route.path != '/signin';
     }
   },
+  data() {
+    return {
+      drawer: true,
+      items: [
+        {
+          icon: "account_balance_wallet",
+          title: "תשלומים צפויים",
+          route: 'home'
+        },
+        {
+          icon: "insert_drive_file",
+          title: "דרישת תשלום חדשה",
+          route: 'create-dp'
+        }
+      ],
+      right: true,
+      title: "בנקיימא"
+    };
+  },
   mounted() {
-    this.displayFrame = this.$route.path != '/signin';
-  }
-}
+    if (this.$root.$data.jwt == null) {
+      this.$router.push("signin");
+    } 
+  },
+  mixins: [ApiConsumer]
+};
 </script>

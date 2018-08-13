@@ -1,6 +1,8 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import SignIn from './views/SignIn.vue'
+import Vue from 'vue';
+import Router from 'vue-router';
+import SignIn from './views/SignIn.vue';
+import Home from './views/Home.vue';
+import CreateDP from './views/CreateDP.vue';
 
 Vue.use(Router)
 
@@ -9,9 +11,19 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
+      name: 'home',
+      path: '/home',
+      component: Home
+    },
+    {
       path: '/signin',
       name: 'signin',
       component: SignIn
+    },
+    {
+      path: '/create-dp',
+      name: 'create-dp',
+      component: CreateDP
     },
     {
       path: '/about',

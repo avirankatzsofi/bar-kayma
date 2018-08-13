@@ -2,7 +2,7 @@
   <v-container fluid fill-height>
     <v-slide-y-transition mode="out-in">
       <v-layout column align-center justify-center>
-        <h2>כאן תופיע טבלת תשלומים צפויים</h2>
+        <h2>כאן יופיע טופס ליצירת דרישת תשלום חדשה</h2>
       </v-layout>
     </v-slide-y-transition>
   </v-container>
@@ -11,7 +11,7 @@
 import ApiConsumer from '../mixins/apiconsumer.mixin';
 export default {
   mounted() {
-    
+    console.log(this.$root.$data.jwt);
   },
   mixins: [ApiConsumer]
 }
