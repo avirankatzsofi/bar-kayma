@@ -1,0 +1,35 @@
+{
+  "connection": "default",
+  "collectionName": "anticipatedpayment",
+  "info": {
+    "name": "anticipatedpayment",
+    "description": ""
+  },
+  "options": {
+    "timestamps": true
+  },
+  "attributes": {
+    "recipientName": {
+      "type": "string"
+    },
+    "recipientEmail": {
+      "type": "email"
+    },
+    "date": {
+      "type": "date"
+    },
+    "description": {
+      "type": "text"
+    },
+    "amount": {
+      "type": "integer"
+    },
+    "comments": {
+      "type": "text"
+    },
+    "user": {
+      "model": "user",
+      "plugin": "users-permissions"
+    }
+  }
+}

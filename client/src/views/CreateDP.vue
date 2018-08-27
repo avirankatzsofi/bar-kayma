@@ -10,6 +10,8 @@
                   v-model="recipientName"
                   :rules="requiredField"
                   v-validate="'required'"
+                  data-vv-name="recipient"
+                  required
                 ></v-text-field>
                 <v-text-field
                   v-model="recipientEmail"
@@ -97,7 +99,7 @@ export default {
     email: "",
     emailRules: [
       v => !!v || "שדה חובה",
-      v => /.+@.+/.test(v) || "אימייל צריך להיות תקין"
+      v => /\S+@\S+\.\S+/.test(v) || "אימייל צריך להיות תקין"
     ]
   }),
   mounted() {
@@ -108,6 +110,7 @@ export default {
       this.$validator.validateAll().then(() => {
         this.submitDP(
           this.$root.$data.jwt,
+          this.$root.$data.uid,
           this.recipientName,
           this.recipientEmail,
           this.date,

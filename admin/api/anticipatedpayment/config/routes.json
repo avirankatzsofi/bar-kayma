@@ -1,0 +1,52 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/anticipatedpayment",
+      "handler": "Anticipatedpayment.find",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/anticipatedpayment/count",
+      "handler": "Anticipatedpayment.count",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/anticipatedpayment/:_id",
+      "handler": "Anticipatedpayment.findOne",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/anticipatedpayment",
+      "handler": "Anticipatedpayment.create",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/anticipatedpayment/:_id",
+      "handler": "Anticipatedpayment.update",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/anticipatedpayment/:_id",
+      "handler": "Anticipatedpayment.destroy",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}

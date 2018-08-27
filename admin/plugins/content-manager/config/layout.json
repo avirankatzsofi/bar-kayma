@@ -1,1 +1,24 @@
-{}
+{
+  "anticipatedPayment": {
+    "attributes": {
+      "recipientName": {
+        "appearance": ""
+      },
+      "recipientEmail": {
+        "appearance": ""
+      },
+      "date": {
+        "appearance": ""
+      },
+      "description": {
+        "appearance": ""
+      },
+      "amount": {
+        "appearance": ""
+      },
+      "comments": {
+        "appearance": ""
+      }
+    }
+  }
+}

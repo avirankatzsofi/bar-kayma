@@ -9,31 +9,36 @@ export default {
                 password: password
             })
                 .catch(reason => console.log(reason))
-                .then(result => this.$root.$data.jwt = result.data.jwt);
+                .then(result => {
+                    this.$root.$data.jwt = result.data.jwt;
+                    this.$root.$data.uid = result.data.user._id;
+                });
         },
         /**
          * Submit the DP to the server
          * @param {string} userToken the JWT of the current user
+         * @param {string} uid Current user's UID
          * @param {string} recipientName The recipient's name
-         * @param {string} reipientEmail The recipient's email
+         * @param {string} recipientEmail The recipient's email
          * @param {Date} date DP date
          * @param {string} description DP description
          * @param {number} amount Payment sum
          * @param {string} comments DP notes
          */
-        submitDP(userToken, recipientName, reipientEmail, date, description, amount, comments) {
+        submitDP(userToken, uid, recipientName, recipientEmail, date, description, amount, comments) {
             return Axios.post(`${apiUrl}/anticipatedpayment`, {
                 recipientName: recipientName,
-                reipientEmail: recipientName,
+                user: uid,
+                recipientEmail: recipientEmail,
                 date: date,
                 description: description,
                 amount: amount,
                 comments: comments
             }, {
-                headers: {
-                    Authorization: `Bearer ${userToken}`
-                }
-            });
+                    headers: {
+                        Authorization: `Bearer ${userToken}`
+                    }
+                });
         }
     },
     // data() {
