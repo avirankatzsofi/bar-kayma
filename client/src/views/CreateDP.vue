@@ -7,12 +7,14 @@
                 <v-text-field
                   name="to"
                   label="נמען"
-                  v-model="recipient"
+                  v-model="recipientName"
                   :rules="requiredField"
+                  v-validate="'required'"
                 ></v-text-field>
                 <v-text-field
-                  v-model="recipient_email"
+                  v-model="recipientEmail"
                   :rules="emailRules"
+                  v-validate="'required|email'"
                   label='דוא"ל נמען'
                   required
                 ></v-text-field>
@@ -33,7 +35,6 @@
                       v-model="date"
                       :rules="requiredField"
                       label="תאריך"
-                      prepend-icon="event"
                       readonly
                     ></v-text-field>
                     <v-date-picker v-model="date" type="date" scrollable>
@@ -52,6 +53,7 @@
                 ></v-textarea>
                 <v-text-field
                   name="amount"
+                  mask="#######"
                   v-model="amount"
                   :rules="requiredField"
                   label="סכום"
@@ -64,7 +66,7 @@
                   v-model="comments"
                   label="הערות"
                 ></v-textarea>
-                <v-btn @click="submit">שליחה</v-btn>
+                <v-btn depressed color="primary" @click="submit">שליחה</v-btn>
               </v-form>
          </v-flex>
       </v-layout>
@@ -73,56 +75,65 @@
 </template>
 
 <script>
-import ApiConsumer from '../mixins/apiconsumer.mixin';
-import Vue from 'vue'
-import VeeValidate from 'vee-validate'
-  Vue.use(VeeValidate)
+import ApiConsumer from "../mixins/apiconsumer.mixin";
+import Vue from "vue";
+import VeeValidate from "vee-validate";
+Vue.use(VeeValidate);
 export default {
   $_veeValidate: {
-    validator: 'new'
+    validator: "new"
   },
   data: () => ({
     date: null,
-    recipient:"",
-    recipient_email:"",
-    description:"",
-    comments:"",
+    recipientName: "",
+    recipientEmail: "",
+    description: "",
+    comments: "",
     amount: null,
     menu: false,
     modal: false,
     valid: false,
-      requiredField: [
-        v => !!v || 'שדה חובה',
-      ],
-      email: '',
-      emailRules: [
-        v => !!v || 'שדה חובה',
-        v => /.+@.+/.test(v) || 'אימייל צריך להיות תקין'
-      ]
+    requiredField: [v => !!v || "שדה חובה"],
+    email: "",
+    emailRules: [
+      v => !!v || "שדה חובה",
+      v => /.+@.+/.test(v) || "אימייל צריך להיות תקין"
+    ]
   }),
   mounted() {
-    console.log(this.$root.$data.jwt);
-    this.$validator.localize('en', this.dictionary)
+    this.$validator.localize("en", this.dictionary);
   },
   methods: {
-    submit () {
-      this.$validator.validateAll()
-    },
+    submit() {
+      this.$validator.validateAll().then(() => {
+        this.submitDP(
+          this.$root.$data.jwt,
+          this.recipientName,
+          this.recipientEmail,
+          this.date,
+          this.description,
+          this.amount,
+          this.comments
+        ).then(response => {
+          console.log(response);
+        });
+      });
+    }
   },
   mixins: [ApiConsumer]
-}
-
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-form{
-    width:400px;
+form * {
+  width: 350px;
 }
-.date-picker input{
-    text-align:center;
+.date-picker input {
+  text-align: center;
 }
-h1, h2 {
+h1,
+h2 {
   font-weight: normal;
 }
 ul {
