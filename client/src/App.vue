@@ -58,7 +58,7 @@ export default {
         {
           icon: "account_balance_wallet",
           title: "תשלומים צפויים",
-          route: 'AnticipatedPayments'
+          route: 'anticipated-payments'
         },
         {
           icon: "insert_drive_file",

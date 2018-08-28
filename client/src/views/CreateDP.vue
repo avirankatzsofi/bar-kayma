@@ -3,6 +3,7 @@
     <v-slide-y-transition mode="out-in">
       <v-layout column align-center justify-center>
          <v-flex xs12 sm8 md4>
+           <h1 class="ok-message">הטופס נשלח בהצלחה :)</h1>
               <v-form v-model="isFormValid">
                 <v-text-field
                   name="to"
@@ -108,8 +109,12 @@ export default {
           this.description,
           this.amount,
           this.comments
-        ).then(response => {
-          console.log(response);
+        ).then(() => {
+          document.querySelector('form').style.opacity = 0;
+          setTimeout(() => {
+            document.querySelector('form').style.height = 0;
+            document.querySelector('.ok-message').style.opacity = 1;
+          }, 500);
         });
       }
     }
@@ -120,11 +125,19 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+form {
+  transition: all 0.5s;
+}
 form * {
   width: 350px;
 }
 .date-picker input {
   text-align: center;
+}
+.ok-message {
+  height: 0;
+  opacity: 0;
+  transition: all 0.5s;
 }
 h1,
 h2 {
