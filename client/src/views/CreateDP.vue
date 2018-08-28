@@ -3,20 +3,17 @@
     <v-slide-y-transition mode="out-in">
       <v-layout column align-center justify-center>
          <v-flex xs12 sm8 md4>
-              <v-form v-model="valid">
+              <v-form v-model="isFormValid">
                 <v-text-field
                   name="to"
                   label="נמען"
                   v-model="recipientName"
                   :rules="requiredField"
-                  v-validate="'required'"
-                  data-vv-name="recipient"
                   required
                 ></v-text-field>
                 <v-text-field
                   v-model="recipientEmail"
                   :rules="emailRules"
-                  v-validate="'required|email'"
                   label='דוא"ל נמען'
                   required
                 ></v-text-field>
@@ -68,7 +65,7 @@
                   v-model="comments"
                   label="הערות"
                 ></v-textarea>
-                <v-btn depressed color="primary" @click="submit">שליחה</v-btn>
+                <v-btn depressed :disabled="!isFormValid" color="primary" @click="submit">שליחה</v-btn>
               </v-form>
          </v-flex>
       </v-layout>
@@ -78,13 +75,7 @@
 
 <script>
 import ApiConsumer from "../mixins/apiconsumer.mixin";
-import Vue from "vue";
-import VeeValidate from "vee-validate";
-Vue.use(VeeValidate);
 export default {
-  $_veeValidate: {
-    validator: "new"
-  },
   data: () => ({
     date: null,
     recipientName: "",
@@ -94,7 +85,7 @@ export default {
     amount: null,
     menu: false,
     modal: false,
-    valid: false,
+    isFormValid: false,
     requiredField: [v => !!v || "שדה חובה"],
     email: "",
     emailRules: [
@@ -102,12 +93,12 @@ export default {
       v => /\S+@\S+\.\S+/.test(v) || "אימייל צריך להיות תקין"
     ]
   }),
-  mounted() {
-    this.$validator.localize("en", this.dictionary);
-  },
+  // mounted() {
+  //   this.$validator.localize("en", this.dictionary);
+  // },
   methods: {
     submit() {
-      this.$validator.validateAll().then(() => {
+      if (this.isFormValid) {
         this.submitDP(
           this.$root.$data.jwt,
           this.$root.$data.uid,
@@ -120,7 +111,7 @@ export default {
         ).then(response => {
           console.log(response);
         });
-      });
+      }
     }
   },
   mixins: [ApiConsumer]
