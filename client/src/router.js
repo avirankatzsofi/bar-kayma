@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import SignIn from './views/SignIn.vue';
-import Home from './views/Home.vue';
+import AnticipatedPayments from './views/AnticipatedPayments.vue';
 import CreateDP from './views/CreateDP.vue';
 
 Vue.use(Router)
@@ -11,9 +11,9 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
-      name: 'home',
-      path: '/home',
-      component: Home
+      name: 'AnticipatedPayments',
+      path: '/anticipated-payments',
+      component: AnticipatedPayments
     },
     {
       path: '/signin',

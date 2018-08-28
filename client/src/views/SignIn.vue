@@ -51,7 +51,7 @@ export default {
   },
   methods: {
     onLogin() {
-      this.login(this.username, this.password).then(() => this.$router.push('home'));
+      this.login(this.username, this.password).then(() => this.$router.push('anticipated-payments'));
     }
   },
   mixins: [ApiConsumer]
