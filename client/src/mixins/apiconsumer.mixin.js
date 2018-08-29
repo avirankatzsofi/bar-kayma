@@ -18,6 +18,7 @@ export default {
                 .then(result => {
                     this.$root.$data.jwt = result.data.jwt;
                     this.$root.$data.uid = result.data.user._id;
+                    this.$root.$data.uFullName = `${result.data.user.firstName} ${result.data.user.lastName}`;
                 });
         },
         /**
@@ -37,7 +38,8 @@ export default {
                 date: date,
                 description: description,
                 amount: amount,
-                comments: comments
+                comments: comments,
+                projectManager: this.$root.$data.uFullName
             }, {
                     headers: {
                         Authorization: `Bearer ${this.$root.$data.jwt}`

@@ -20,5 +20,12 @@
         "appearance": ""
       }
     }
+  },
+  "anticipatedpayment": {
+    "attributes": {
+      "projectManager": {
+        "appearance": ""
+      }
+    }
   }
 }

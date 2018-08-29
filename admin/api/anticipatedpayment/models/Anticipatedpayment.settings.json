@@ -30,6 +30,9 @@
     "user": {
       "model": "user",
       "plugin": "users-permissions"
+    },
+    "projectManager": {
+      "type": "string"
     }
   }
 }

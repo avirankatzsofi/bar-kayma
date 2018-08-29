@@ -1,0 +1,15 @@
+{
+  "user": {
+    "attributes": {
+      "project": {
+        "appearance": ""
+      },
+      "firstName": {
+        "appearance": ""
+      },
+      "lastName": {
+        "appearance": ""
+      }
+    }
+  }
+}
