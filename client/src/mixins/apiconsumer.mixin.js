@@ -1,6 +1,7 @@
 import Axios from "axios";
+import * as config from '../config.json';
 
-const apiUrl = "http://localhost:1337";
+const apiUrl = config.apiUrl;
 export default {
     methods: {
         login(username, password) {
