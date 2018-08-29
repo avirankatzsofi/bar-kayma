@@ -2,24 +2,52 @@
   <v-container fluid fill-height>
     <v-slide-y-transition mode="out-in">
       <v-layout column align-center justify-center>
-        <h2>כאן תופיע טבלת תשלומים צפויים</h2>
+        <v-data-table
+          :headers="headers"
+          :items="payments"
+          hide-actions
+          class="elevation-1"
+        >
+          <template slot="items" slot-scope="props">
+            <td>{{ props.item.recipientName }}</td>
+            <td>{{ props.item.recipientEmail }}</td>
+            <td>{{ props.item.date }}</td>
+            <td>{{ props.item.description }}</td>
+            <td>{{ props.item.amount }}</td>
+            <td>{{ props.item.comments }}</td>
+          </template>
+        </v-data-table>
       </v-layout>
     </v-slide-y-transition>
   </v-container>
 </template>
 <script>
-import ApiConsumer from '../mixins/apiconsumer.mixin';
+import ApiConsumer from "../mixins/apiconsumer.mixin";
 export default {
+  data() {
+    return {
+      headers: [
+        { text: "שם נמען", value: "recipientName" },
+        { text: "אימייל נמען", value: "recipientEmail" },
+        { text: "תאריך", value: "date" },
+        { text: "תיאור", value: "description" },
+        { text: "סכום (₪)", value: "amount" },
+        { text: "תגובות", value: "comments" }
+      ],
+      payments: []
+    };
+  },
   mounted() {
-    
+    this.getAnticipatedPayments().then(result => this.payments = result.data);
   },
   mixins: [ApiConsumer]
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1, h2 {
+h1,
+h2 {
   font-weight: normal;
 }
 ul {

@@ -4,6 +4,11 @@ import * as config from '../config.json';
 const apiUrl = config.apiUrl;
 export default {
     methods: {
+        /**
+         * Send a login request
+         * @param {string} username The username
+         * @param {string} password The password
+         */
         login(username, password) {
             return Axios.post(`${apiUrl}/auth/local`, {
                 identifier: username,
@@ -17,8 +22,6 @@ export default {
         },
         /**
          * Submit the DP to the server
-         * @param {string} userToken the JWT of the current user
-         * @param {string} uid Current user's UID
          * @param {string} recipientName The recipient's name
          * @param {string} recipientEmail The recipient's email
          * @param {Date} date DP date
@@ -26,10 +29,10 @@ export default {
          * @param {number} amount Payment sum
          * @param {string} comments DP notes
          */
-        submitDP(userToken, uid, recipientName, recipientEmail, date, description, amount, comments) {
+        submitDP(recipientName, recipientEmail, date, description, amount, comments) {
             return Axios.post(`${apiUrl}/anticipatedpayment`, {
                 recipientName: recipientName,
-                user: uid,
+                user: this.$root.$data.uid,
                 recipientEmail: recipientEmail,
                 date: date,
                 description: description,
@@ -37,14 +40,19 @@ export default {
                 comments: comments
             }, {
                     headers: {
-                        Authorization: `Bearer ${userToken}`
+                        Authorization: `Bearer ${this.$root.$data.jwt}`
                     }
                 });
+        },
+        /**
+         * Get anticipated payments for current user
+         */
+        getAnticipatedPayments() {
+            return Axios.get(`${apiUrl}/anticipatedpayment?user=${this.$root.$data.uid}`, {
+                headers: {
+                    Authorization: `Bearer ${this.$root.$data.jwt}`
+                }
+            });
         }
-    },
-    // data() {
-    //     return {
-    //         jwt: ""
-    //     };
-    // }
+    }
 }

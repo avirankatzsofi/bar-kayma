@@ -101,8 +101,6 @@ export default {
     submit() {
       if (this.isFormValid) {
         this.submitDP(
-          this.$root.$data.jwt,
-          this.$root.$data.uid,
           this.recipientName,
           this.recipientEmail,
           this.date,
