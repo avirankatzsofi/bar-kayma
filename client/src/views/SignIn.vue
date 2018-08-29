@@ -4,7 +4,7 @@
       <v-layout column align-center justify-center>
          <v-flex xs12 sm8 md4>
         <img src="@/assets/logo.png" alt="Vuetify.js" class="mb-5">
-        <v-form @submit.prevent="onLogin">
+        <v-form @submit.prevent="onLogin" ref="form">
         <v-text-field
           name="username"
           label="שם משתמש"
@@ -21,7 +21,7 @@
           @click:append="() => (showPassword = !showPassword)"
           prepend-icon="lock"
           v-model="password"
-          :rules="[() => ('שם המשתמש או הסיסמה אינם נכונים')]"
+          :rules="[(v) => !this.isLoginFailure || ('שם המשתמש או הסיסמה אינם נכונים')]"
           :error="false"
           :type="showPassword ? 'text' : 'password'"
           box
@@ -39,19 +39,24 @@
   </v-container>
 </template>
 <script>
-import ApiConsumer from '../mixins/apiconsumer.mixin';
+import ApiConsumer from "../mixins/apiconsumer.mixin";
 export default {
   data() {
     return {
       username: "",
       password: "",
       showPassword: false,
-      signInFormValid: true
+      isLoginFailure: false
     };
   },
   methods: {
     onLogin() {
-      this.login(this.username, this.password).then(() => this.$router.push('anticipated-payments'));
+      this.login(this.username, this.password)
+        .then(() => this.$router.push("anticipated-payments"))
+        .catch(() => {
+          this.isLoginFailure = true;
+          this.$refs.form.validate();
+        });
     }
   },
   mixins: [ApiConsumer]
