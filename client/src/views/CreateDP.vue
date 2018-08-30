@@ -128,6 +128,7 @@ form {
 }
 form * {
   width: 350px;
+  max-width: 100%;
 }
 .date-picker input {
   text-align: center;
