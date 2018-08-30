@@ -6,7 +6,7 @@
           :headers="headers"
           :items="payments"
           hide-actions
-          class="elevation-1"
+          class="elevation-1 responsive-table"
         >
           <template slot="items" slot-scope="props">
             <td>{{ props.item.recipientName }}</td>
@@ -46,6 +46,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.responsive-table {
+  max-width: 100%;
+}
 h1,
 h2 {
   font-weight: normal;
