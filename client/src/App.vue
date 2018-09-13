@@ -71,7 +71,7 @@ export default {
     };
   },
   mounted() {
-    if (this.$root.$data.jwt == null) {
+    if (sessionStorage.getItem('jwt') == null) {
       this.$router.push("signin");
     } 
   },

@@ -25,6 +25,21 @@
     "attributes": {
       "projectManager": {
         "appearance": ""
+      },
+      "status": {
+        "appearance": ""
+      },
+      "sumPayed": {
+        "appearance": ""
+      },
+      "receiptNumber": {
+        "appearance": ""
+      },
+      "type": {
+        "appearance": ""
+      },
+      "accountNumber": {
+        "appearance": ""
       }
     }
   }

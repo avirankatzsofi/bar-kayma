@@ -2,6 +2,12 @@ import Axios from "axios";
 import * as config from '../config.json';
 
 const apiUrl = config.apiUrl;
+const sessionStorageKeys = {
+    jwt: 'jwt',
+    uid: 'uid',
+    uFullName: 'uFullName'
+};
+
 export default {
     methods: {
         /**
@@ -16,9 +22,9 @@ export default {
             })
                 .catch(reason => console.log(reason))
                 .then(result => {
-                    this.$root.$data.jwt = result.data.jwt;
-                    this.$root.$data.uid = result.data.user._id;
-                    this.$root.$data.uFullName = `${result.data.user.firstName} ${result.data.user.lastName}`;
+                    sessionStorage.setItem('jwt', result.data.jwt);
+                    sessionStorage.setItem('uid', result.data.user._id);
+                    sessionStorage.setItem('uFullName', `${result.data.user.firstName} ${result.data.user.lastName}`);
                 });
         },
         /**
@@ -33,16 +39,16 @@ export default {
         submitDP(recipientName, recipientEmail, date, description, amount, comments) {
             return Axios.post(`${apiUrl}/anticipatedpayment`, {
                 recipientName: recipientName,
-                user: this.$root.$data.uid,
+                user: sessionStorage.getItem(sessionStorageKeys.uid),
                 recipientEmail: recipientEmail,
                 date: date,
                 description: description,
                 amount: amount,
                 comments: comments,
-                projectManager: this.$root.$data.uFullName
+                projectManager: sessionStorage.getItem(sessionStorageKeys.uFullName)
             }, {
                     headers: {
-                        Authorization: `Bearer ${this.$root.$data.jwt}`
+                        Authorization: `Bearer ${sessionStorage.getItem(sessionStorageKeys.jwt)}`
                     }
                 });
         },
@@ -50,9 +56,9 @@ export default {
          * Get anticipated payments for current user
          */
         getAnticipatedPayments() {
-            return Axios.get(`${apiUrl}/anticipatedpayment?user=${this.$root.$data.uid}`, {
+            return Axios.get(`${apiUrl}/anticipatedpayment?user=${sessionStorage.getItem(sessionStorageKeys.uid)}`, {
                 headers: {
-                    Authorization: `Bearer ${this.$root.$data.jwt}`
+                    Authorization: `Bearer ${sessionStorage.getItem(sessionStorageKeys.jwt)}`
                 }
             });
         }

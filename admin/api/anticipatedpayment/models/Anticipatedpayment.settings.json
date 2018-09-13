@@ -33,6 +33,31 @@
     },
     "projectManager": {
       "type": "string"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "Payed",
+        " Unpayed"
+      ]
+    },
+    "sumPayed": {
+      "type": "decimal"
+    },
+    "receiptNumber": {
+      "type": "integer"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "Cheque",
+        " Bank Transfer",
+        " Defrayal",
+        " Cash"
+      ]
+    },
+    "accountNumber": {
+      "type": "integer"
     }
   }
 }
