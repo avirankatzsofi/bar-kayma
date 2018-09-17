@@ -11,7 +11,7 @@
           <template slot="items" slot-scope="props">
             <td>{{ props.item.recipientName }}</td>
             <td>{{ props.item.recipientEmail }}</td>
-            <td>{{ props.item.date }}</td>
+            <td>{{ new Date(props.item.date).toLocaleDateString('he') }}</td>
             <td>{{ props.item.description }}</td>
             <td>{{ props.item.amount }}</td>
             <td>{{ props.item.comments }}</td>
