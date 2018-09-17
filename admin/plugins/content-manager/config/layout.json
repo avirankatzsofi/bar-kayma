@@ -42,5 +42,22 @@
         "appearance": ""
       }
     }
+  },
+  "documentTemplate": {
+    "attributes": {
+      "Header": {
+        "appearance": ""
+      },
+      "Content": {
+        "appearance": ""
+      }
+    }
+  },
+  "documenttemplate": {
+    "attributes": {
+      "Content": {
+        "appearance": "WYSIWYG"
+      }
+    }
   }
 }

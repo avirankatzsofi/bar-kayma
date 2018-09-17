@@ -10,19 +10,23 @@
   },
   "attributes": {
     "recipientName": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "recipientEmail": {
-      "type": "email"
+      "type": "email",
+      "required": true
     },
     "date": {
-      "type": "date"
+      "type": "date",
+      "required": true
     },
     "description": {
       "type": "text"
     },
     "amount": {
-      "type": "integer"
+      "type": "integer",
+      "required": true
     },
     "comments": {
       "type": "text"
@@ -37,9 +41,10 @@
     "status": {
       "type": "enumeration",
       "enum": [
-        "Payed",
-        " Unpayed"
-      ]
+        "Unpayed",
+        "Payed"
+      ],
+      "default": "Unpayed"
     },
     "sumPayed": {
       "type": "decimal"
@@ -51,9 +56,9 @@
       "type": "enumeration",
       "enum": [
         "Cheque",
-        " Bank Transfer",
-        " Defrayal",
-        " Cash"
+        "Bank Transfer",
+        "Defrayal",
+        "Cash"
       ]
     },
     "accountNumber": {
