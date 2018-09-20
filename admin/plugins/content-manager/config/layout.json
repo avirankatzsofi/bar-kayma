@@ -50,12 +50,18 @@
       },
       "Content": {
         "appearance": ""
+      },
+      "content": {
+        "appearance": "WYSIWYG"
       }
     }
   },
   "documenttemplate": {
     "attributes": {
       "Content": {
+        "appearance": "WYSIWYG"
+      },
+      "content": {
         "appearance": "WYSIWYG"
       }
     }

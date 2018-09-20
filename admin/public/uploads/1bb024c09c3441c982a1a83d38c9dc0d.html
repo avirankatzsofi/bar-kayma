@@ -1,0 +1,153 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        h1 {
+            font-size: 12pt;
+            text-decoration: underline;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        p {
+            margin: 0;
+        }
+
+        .quote {
+            font-style: italic;
+            font-size: 9pt;
+        }
+
+        .right {
+            float: right;
+        }
+
+        .left {
+            float: left;
+        }
+
+        div.header {
+            display: flow-root;
+        }
+
+        .underline {
+            text-decoration: underline;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .align-center {
+            text-align: center;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        th {
+            background-color: aqua
+        }
+
+        table {
+            width: 100%;
+        }
+
+        .small {
+            font-size: 9pt;
+        }
+
+        .footer {
+            font-size: 9pt;
+        }
+
+        .footer img {
+            height: 30pt;
+        }
+    </style>
+</head>
+
+<body dir="rtl">
+    <div class="header">
+        <div class="right">
+            <p class="bold"><span class="underline">בר-קיימא לתרבות, אמנות, מוסיקה ושלום</span> (ע"ר 580450898)</p>
+            <p> ת.ד. 500, ירושלים 9100400</p>
+            <p class="quote">"אֲשֶׁר אֵין לָהּ קָצִין שֹׁטֵר וּמֹשֵׁל" - משלי ו'</p>
+        </div>
+        <img class="left" src="8c946ec268cb479d89c693a8eab5632a.png" class="left">
+    </div>
+    <p>{{date}}</p>
+    <br>
+    <p><span class="underline bold">לכבוד: </span>{{recipientName}}</p>
+    <p>לידיה / sababien@gmail.com</p>
+    <h1>דרישת תשלום לעמותת בר-קיימא לתרבות, אמנות, מוסיקה ושלום (ע"ר 580450898)</h1>
+    <p class="align-center">מפרויקט {{project}}</p>
+    <p>אהלן,<br>אבקש תשלום עבור:</p>
+    <table>
+        <tr>
+            <th style="width:25%">סכום בש"ח</th>
+            <th>פירוט</th>
+        </tr>
+        <tr>
+            <td>{{amount}}</td>
+            <td>{{description}}</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                הערות: {{comments}}
+                <br>
+                <p class="small">*לתשלום עד: שוטף + 30 או כפי שהוסכם</p>
+            </td>
+        </tr>
+    </table>
+    <h1>ניתן לשלם באמצעות:</h1>
+    <table>
+        <tr>
+            <td class="bold">צ'ק/המחאה</td>
+            <td><strong>לפקודת עמותת בר קיימא לתרבות (ע"ר),</strong> כתובת: ת.ד. 500, ירושלים 9100400</td>
+        </tr>
+        <tr>
+            <td class="bold">העברה בנקאית</td>
+            <td>
+                פרטי המוטב: בר קיימא לתרבות, אמנות, מוסיקה ושלום (ע"ר)
+                <br>
+                פרטי חשבון: בנק הבינלאומי (31) , סניף ראשי (012) חשבון מס' 409-036218
+                <br>
+                IBAN: IL290310120000000036218
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" class="align-center">
+                או <a href="https://www.google.com/url?q=https://www.myofficeguy.com/p/7kl4r/dpm8d/dpmdi/payment/&sa=D&ust=1537436015745000">בכרטיס
+                    אשראי</a>
+            </td>
+        </tr>
+    </table>
+    <br>
+    <p class="align-center">בתודה,</p>
+    <p class="align-center">{{fromName}},{{fromEmail}}</p>
+    <p class="align-center">{{project}}</p>
+    <br>
+    <br>
+    <br>
+    <hr>
+    <a href="https://www.google.com/url?q=https://drive.google.com/open?id%3D0B7ICN8W1r7b_S0FXT1ZkQVE0bm8&sa=D&ust=1537436015747000">
+        <h1>לינק למסמכי עמותה: אישור ניכוי מס, ניהול תקין, קיום חשבון בנק וכד'</h1>
+    </a>
+    <p class="align-center"> office@barkayma.org // barkayma.org </p>
+    <div class="footer">
+        <div class="right">
+            <p>הופק באמצעות מערכת בנקיימא, מבית בר-קיימא לתרבות, אמנות, מוסיקה ושלום (ע"ר 580450898) </p>
+            <p>{{date}}</p>
+        </div>
+        <img class="left" src="0e700ea33f3542dbb3ebdd421671de93.png">
+    </div>
+</body>
+
+</html>
