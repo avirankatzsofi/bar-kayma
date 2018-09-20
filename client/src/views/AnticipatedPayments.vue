@@ -15,6 +15,7 @@
             <td>{{ props.item.description }}</td>
             <td>{{ props.item.amount }}</td>
             <td>{{ props.item.comments }}</td>
+            <td>{{ props.item.status ==  status.unpayed ? "לא שולם" : "שולם"}}</td>
           </template>
         </v-data-table>
       </v-layout>
@@ -26,13 +27,18 @@ import ApiConsumer from "../mixins/apiconsumer.mixin";
 export default {
   data() {
     return {
+      status: {
+        payed: 'Payed',
+        unpayed: 'Unpayed'
+      },
       headers: [
         { text: "שם נמען", value: "recipientName" },
         { text: "אימייל נמען", value: "recipientEmail" },
         { text: "תאריך", value: "date" },
         { text: "תיאור", value: "description" },
-        { text: "סכום (₪)", value: "amount" },
-        { text: "תגובות", value: "comments" }
+        { text: "סכום דרישה (₪)", value: "amount" },
+        { text: "תגובות", value: "comments" },
+        { text: "סטטוס", value: "status" }
       ],
       payments: []
     };
