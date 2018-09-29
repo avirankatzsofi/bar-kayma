@@ -15,7 +15,7 @@
             <td>{{ props.item.amount }}</td>
             <td>{{ props.item.comments }}</td>
             <td>{{ props.item.status ==  status.unpayed ? "לא שולם" : "שולם"}}</td>
-            <td><a :href="'//localhost:1337/dp/' + props.item._id + '.pdf'">{{ props.item.id }}</a></td>
+            <td><a :href="apiUrl + '/dp/' + props.item._id + '.pdf'">{{ props.item.id }}</a></td>
           </template>
         </v-data-table>
       </v-layout>
@@ -24,9 +24,12 @@
 </template>
 <script>
 import ApiConsumer from "../mixins/apiconsumer.mixin";
+import * as config from '../config.json';
+
 export default {
   data() {
     return {
+      apiUrl: config.apiUrl,
       status: {
         payed: 'Payed',
         unpayed: 'Unpayed'
