@@ -40,6 +40,9 @@
       },
       "accountNumber": {
         "appearance": ""
+      },
+      "pdfLink": {
+        "appearance": ""
       }
     }
   },

@@ -22,9 +22,9 @@ export default {
             })
                 .catch(reason => console.log(reason))
                 .then(result => {
-                    sessionStorage.setItem('jwt', result.data.jwt);
-                    sessionStorage.setItem('uid', result.data.user._id);
-                    sessionStorage.setItem('uFullName', `${result.data.user.firstName} ${result.data.user.lastName}`);
+                    sessionStorage.setItem(sessionStorageKeys.jwt, result.data.jwt);
+                    sessionStorage.setItem(sessionStorageKeys.uid, result.data.user._id);
+                    sessionStorage.setItem(sessionStorageKeys.uFullName, `${result.data.user.firstName} ${result.data.user.lastName}`);
                 });
         },
         /**

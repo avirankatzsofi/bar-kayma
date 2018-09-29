@@ -1,4 +1,6 @@
 'use strict';
+const wkhtmltopdf = require('wkhtmltopdf');
+const fs = require('fs');
 
 /**
  * Anticipatedpayment.js controller
@@ -53,7 +55,25 @@ module.exports = {
    */
 
   create: async (ctx) => {
-    return strapi.services.anticipatedpayment.add(ctx.request.body);
+    const result = strapi.services.anticipatedpayment.add(ctx.request.body);
+    result.then(doc => {
+      fs.readFile('public/templates/dp.html', 'utf8', (err, data) => {
+        const regex = /{{[a-zA-Z0-9\.]+}}/g;
+        const matches = data.match(regex);
+        matches.forEach(match => {
+          let keys = match.split(/{{|}}/)[1];
+          keys = keys.split('.');
+          let value = false;
+          keys.forEach(key => {
+            value = value ? value[key] : doc[key];
+          });
+          value = value.toLocaleDateString ? value.toLocaleDateString('he-IL') : value;
+          data = data.split(match).join(value);
+        });
+        wkhtmltopdf(data, { output: 'out.pdf' });
+      });
+    });
+    return result;
   },
 
   /**
