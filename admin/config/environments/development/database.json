@@ -12,7 +12,7 @@
         "password": "bar-kayma2018"
       },
       "options": {
-        "authenticationDatabase": "",
+        "authenticationDatabase": "bar-kayma-dev",
         "ssl": false
       }
     }

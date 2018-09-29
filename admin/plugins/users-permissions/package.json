@@ -1,8 +1,8 @@
 {
   "_from": "strapi-plugin-users-permissions@alpha",
-  "_id": "strapi-plugin-users-permissions@3.0.0-alpha.13.0.1",
+  "_id": "strapi-plugin-users-permissions@3.0.0-alpha.14.2",
   "_inBundle": false,
-  "_integrity": "sha512-i/7fvdvhzTK+4x0zOV3cS5Xw49zV0LXpSxtB5e29NrnCGAr2NYn2ifBowNzKgolG35NkA5dABDkeiybLCOr9qQ==",
+  "_integrity": "sha512-NrpEYZn/y6pZl46ehhj5AdCJBefueRqz3eyjcF2O+pRtYfTehDLf5wuZZMfFQVdsKy+llWDyLnmGGv/TBUH7yg==",
   "_location": "/strapi-plugin-users-permissions",
   "_phantomChildren": {},
   "_requested": {
@@ -18,10 +18,10 @@
   "_requiredBy": [
     "#USER"
   ],
-  "_resolved": "https://registry.npmjs.org/strapi-plugin-users-permissions/-/strapi-plugin-users-permissions-3.0.0-alpha.13.0.1.tgz",
-  "_shasum": "2b941d6115f5b695f31e77f60bacdd003c8503ea",
+  "_resolved": "https://registry.npmjs.org/strapi-plugin-users-permissions/-/strapi-plugin-users-permissions-3.0.0-alpha.14.2.tgz",
+  "_shasum": "6c027597618b172ac35812b80d9a2148755b96f1",
   "_spec": "strapi-plugin-users-permissions@alpha",
-  "_where": "/home/aviran/sofi/bar-kayma/admin",
+  "_where": "/tmp/strapi142",
   "author": {
     "name": "Strapi team",
     "email": "hi@strapi.io",
@@ -36,6 +36,7 @@
     "grant-koa": "^3.8.1",
     "jsonwebtoken": "^8.1.0",
     "koa": "^2.1.0",
+    "koa2-ratelimit": "^0.6.1",
     "purest": "^2.0.1",
     "request": "^2.83.0",
     "uuid": "^3.1.0"
@@ -43,7 +44,7 @@
   "deprecated": false,
   "description": "Protect your API with a full-authentication process based on JWT",
   "devDependencies": {
-    "strapi-helper-plugin": "3.0.0-alpha.13.0.1"
+    "strapi-helper-plugin": "3.0.0-alpha.14.2"
   },
   "engines": {
     "node": ">= 9.0.0",
@@ -82,7 +83,7 @@
     "icon": "users",
     "description": "users-permissions.plugin.description"
   },
-  "version": "3.0.0-alpha.13.0.1",
+  "version": "3.0.0-alpha.14.2",
   "warnings": [
     {
       "code": "ENOTSUP",
@@ -90,7 +91,7 @@
         "node": ">= 9.0.0",
         "npm": ">= 5.0.0"
       },
-      "pkgid": "strapi-plugin-users-permissions@3.0.0-alpha.13.0.1"
+      "pkgid": "strapi-plugin-users-permissions@3.0.0-alpha.14.2"
     },
     {
       "code": "ENOTSUP",
@@ -98,7 +99,7 @@
         "node": ">= 9.0.0",
         "npm": ">= 5.0.0"
       },
-      "pkgid": "strapi-plugin-users-permissions@3.0.0-alpha.13.0.1"
+      "pkgid": "strapi-plugin-users-permissions@3.0.0-alpha.14.2"
     }
   ]
 }
