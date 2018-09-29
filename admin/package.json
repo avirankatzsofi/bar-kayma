@@ -22,6 +22,7 @@
     "full-icu": "^1.2.1",
     "lodash": "4.17.5",
     "strapi": "^3.0.0-alpha.14.2",
+    "strapi-email-sendgrid": "^3.0.0-alpha.14.2",
     "strapi-hook-mongoose": "3.0.0-alpha.14.2",
     "wkhtmltopdf": "^0.3.4"
   },

@@ -71,6 +71,15 @@ module.exports = {
           data = data.split(match).join(value);
         });
         wkhtmltopdf(data, { output: `public/dp/${doc._id}.pdf` });
+        console.log(doc.user.email);
+        strapi.plugins['email'].services.email.send({
+          to: doc.user.email,
+          from: 'bill@barkayma.org',
+          replyTo: 'bill@barkayma.org',
+          subject: 'בנקיימא - דרישת תשלום התקבלה',
+          text: 'Hello world!',
+          html: 'Hello world!'
+        }).then(() => console.log('email sent'));
       });
     });
     return result;
