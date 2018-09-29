@@ -71,15 +71,16 @@ module.exports = {
           data = data.split(match).join(value);
         });
         wkhtmltopdf(data, { output: `public/dp/${doc._id}.pdf` });
-        console.log(doc.user.email);
         strapi.plugins['email'].services.email.send({
-          to: doc.user.email,
+          to: [doc.user.email, doc.recipientEmail],
           from: 'bill@barkayma.org',
           replyTo: 'bill@barkayma.org',
-          subject: 'בנקיימא - דרישת תשלום התקבלה',
-          text: 'Hello world!',
-          html: 'Hello world!'
-        }).then(() => console.log('email sent'));
+          subject: `דרישת תשלום עבור ${doc.user.project}`,
+          html: `היי ${doc.recipientName},<br>
+          על-מנת להוריד את דרישת התשלום <a href="http://localhost:1337/dp/${doc._id}.pdf">לחץ כאן</a><br>
+          בברכה,<br>
+          ביל`
+        }).then(() => console.debug('email sent'));
       });
     });
     return result;

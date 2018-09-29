@@ -56,7 +56,7 @@ export default {
          * Get anticipated payments for current user
          */
         getAnticipatedPayments() {
-            return Axios.get(`${apiUrl}/anticipatedpayment?user=${sessionStorage.getItem(sessionStorageKeys.uid)}`, {
+            return Axios.get(`${apiUrl}/anticipatedpayment?user=${sessionStorage.getItem(sessionStorageKeys.uid)}&_limit=9999`, {
                 headers: {
                     Authorization: `Bearer ${sessionStorage.getItem(sessionStorageKeys.jwt)}`
                 }

@@ -5,7 +5,6 @@
         <v-data-table
           :headers="headers"
           :items="payments"
-          hide-actions
           class="elevation-1 responsive-table"
         >
           <template slot="items" slot-scope="props">
@@ -16,6 +15,7 @@
             <td>{{ props.item.amount }}</td>
             <td>{{ props.item.comments }}</td>
             <td>{{ props.item.status ==  status.unpayed ? "לא שולם" : "שולם"}}</td>
+            <td><a :href="'//localhost:1337/dp/' + props.item._id + '.pdf'">{{ props.item.id }}</a></td>
           </template>
         </v-data-table>
       </v-layout>
@@ -38,7 +38,8 @@ export default {
         { text: "תיאור", value: "description" },
         { text: "סכום דרישה (₪)", value: "amount" },
         { text: "תגובות", value: "comments" },
-        { text: "סטטוס", value: "status" }
+        { text: "סטטוס", value: "status" },
+        {text: "קובץ", value: "_id"}
       ],
       payments: []
     };
