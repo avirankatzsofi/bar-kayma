@@ -77,7 +77,7 @@ module.exports = {
           replyTo: 'bill@barkayma.org',
           subject: `דרישת תשלום עבור ${doc.user.project}`,
           html: `היי ${doc.recipientName},<br>
-          על-מנת להוריד את דרישת התשלום <a href="http://localhost:1337/dp/${doc._id}.pdf">לחץ כאן</a><br>
+          על-מנת להוריד את דרישת התשלום <a href="${ctx.request.origin}/dp/${doc._id}.pdf">לחץ כאן</a><br>
           בברכה,<br>
           ביל`
         }).then(() => console.debug('email sent'));
