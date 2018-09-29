@@ -70,7 +70,7 @@ module.exports = {
           value = value.toLocaleDateString ? value.toLocaleDateString('he-IL') : value;
           data = data.split(match).join(value);
         });
-        wkhtmltopdf(data, { output: 'out.pdf' });
+        wkhtmltopdf(data, { output: `public/dp/${doc._id}.pdf` });
       });
     });
     return result;

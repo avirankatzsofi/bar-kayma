@@ -60,14 +60,6 @@
     },
     "accountNumber": {
       "type": "integer"
-    },
-    "pdfLink": {
-      "type": "string"
-    },
-    "pdf": {
-      "model": "file",
-      "via": "related",
-      "plugin": "upload"
     }
   }
 }
