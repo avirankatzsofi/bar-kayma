@@ -60,6 +60,7 @@ module.exports = {
     result.then(doc => {
       parseTemplate(`${templatesDir}/dp.pdf.html`, doc)
         .then(dpContent => wkhtmltopdf(dpContent, { output: `public/dp/${doc._id}.pdf` }));
+      doc.pdfUrl = `${ctx.request.origin}/dp/${doc._id}.pdf`;
       parseTemplate(`${templatesDir}/dp.email.html`, doc)
         .then((emailContent) => {
           strapi.plugins['email'].services.email.send({
@@ -100,7 +101,6 @@ function parseTemplate(templateFile, doc) {
   let result = null;
   return new Promise((resolve) => {
     fs.readFile(templateFile, 'utf8', (err, data) => {
-      result = data;
       const regex = /{{[a-zA-Z0-9\.]+}}/g;
       const matches = data.match(regex);
       matches.forEach(match => {
@@ -111,9 +111,9 @@ function parseTemplate(templateFile, doc) {
           value = value ? value[key] : doc[key];
         });
         value = value.toLocaleDateString ? value.toLocaleDateString('he-IL') : value;
-        result = result.split(match).join(value);
+        data = data.split(match).join(value);
       });
-      resolve(result);
+      resolve(data);
     });
   });
 }
