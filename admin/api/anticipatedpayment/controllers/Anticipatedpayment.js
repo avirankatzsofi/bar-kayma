@@ -57,15 +57,16 @@ module.exports = {
   create: async (ctx) => {
     const result = strapi.services.anticipatedpayment.add(ctx.request.body);
     result.then(doc => {
-      fs.readFile('public/templates/dp.html', 'utf8', (err, data) => {
+      fs.readFile('public/templates/dp.pdf.html', 'utf8', (err, data) => {
         const regex = /{{[a-zA-Z0-9\.]+}}/g;
         const matches = data.match(regex);
         matches.forEach(match => {
           let keys = match.split(/{{|}}/)[1];
-          keys = keys.split('.');
+          keys = keys.split('.'); // in case of nested keys e.g. user.project
           let value = false;
           keys.forEach(key => {
             value = value ? value[key] : doc[key];
+            console.log(key + ': ' + value);
           });
           value = value.toLocaleDateString ? value.toLocaleDateString('he-IL') : value;
           data = data.split(match).join(value);
