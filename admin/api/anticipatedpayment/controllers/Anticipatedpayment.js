@@ -1,6 +1,7 @@
 'use strict';
 const wkhtmltopdf = require('wkhtmltopdf');
 const fs = require('fs');
+const templatesDir = 'public/templates';
 
 /**
  * Anticipatedpayment.js controller
@@ -57,32 +58,19 @@ module.exports = {
   create: async (ctx) => {
     const result = strapi.services.anticipatedpayment.add(ctx.request.body);
     result.then(doc => {
-      fs.readFile('public/templates/dp.pdf.html', 'utf8', (err, data) => {
-        const regex = /{{[a-zA-Z0-9\.]+}}/g;
-        const matches = data.match(regex);
-        matches.forEach(match => {
-          let keys = match.split(/{{|}}/)[1];
-          keys = keys.split('.'); // in case of nested keys e.g. user.project
-          let value = false;
-          keys.forEach(key => {
-            value = value ? value[key] : doc[key];
-            console.log(key + ': ' + value);
-          });
-          value = value.toLocaleDateString ? value.toLocaleDateString('he-IL') : value;
-          data = data.split(match).join(value);
+      parseTemplate(`${templatesDir}/dp.pdf.html`, doc)
+        .then(dpContent => wkhtmltopdf(dpContent, { output: `public/dp/${doc._id}.pdf` }));
+      parseTemplate(`${templatesDir}/dp.email.html`, doc)
+        .then((emailContent) => {
+          strapi.plugins['email'].services.email.send({
+            to: [doc.user.email, doc.recipientEmail],
+            from: 'bill@barkayma.org',
+            replyTo: 'bill@barkayma.org',
+            subject: `דרישת תשלום עבור ${doc.user.project}`,
+            html: emailContent
+          }).then(() => console.debug('email sent'))
+            .catch(err => console.error(err));
         });
-        wkhtmltopdf(data, { output: `public/dp/${doc._id}.pdf` });
-        strapi.plugins['email'].services.email.send({
-          to: [doc.user.email, doc.recipientEmail],
-          from: 'bill@barkayma.org',
-          replyTo: 'bill@barkayma.org',
-          subject: `דרישת תשלום עבור ${doc.user.project}`,
-          html: `היי ${doc.recipientName},<br>
-          על-מנת להוריד את דרישת התשלום <a href="${ctx.request.origin}/dp/${doc._id}.pdf">לחץ כאן</a><br>
-          בברכה,<br>
-          ביל`
-        }).then(() => console.debug('email sent'));
-      });
     });
     return result;
   },
@@ -94,7 +82,7 @@ module.exports = {
    */
 
   update: async (ctx, next) => {
-    return strapi.services.anticipatedpayment.edit(ctx.params, ctx.request.body) ;
+    return strapi.services.anticipatedpayment.edit(ctx.params, ctx.request.body);
   },
 
   /**
@@ -107,3 +95,25 @@ module.exports = {
     return strapi.services.anticipatedpayment.remove(ctx.params);
   }
 };
+
+function parseTemplate(templateFile, doc) {
+  let result = null;
+  return new Promise((resolve) => {
+    fs.readFile(templateFile, 'utf8', (err, data) => {
+      result = data;
+      const regex = /{{[a-zA-Z0-9\.]+}}/g;
+      const matches = data.match(regex);
+      matches.forEach(match => {
+        let keys = match.split(/{{|}}/)[1];
+        keys = keys.split('.'); // in case of nested keys e.g. user.project
+        let value = false;
+        keys.forEach(key => {
+          value = value ? value[key] : doc[key];
+        });
+        value = value.toLocaleDateString ? value.toLocaleDateString('he-IL') : value;
+        result = result.split(match).join(value);
+      });
+      resolve(result);
+    });
+  });
+}
