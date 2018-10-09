@@ -3,8 +3,17 @@
     <v-slide-y-transition mode="out-in">
       <v-layout column align-center justify-center>
          <v-flex xs12 sm8 md4>
-           <h1 class="ok-message">הטופס נשלח בהצלחה :)</h1>
+           <h1 class="ok-message" v-if="isFormSubmitted">
+             הטופס נשלח לכתובת {{recipientEmail}}
+             <a :href="pdfLink">לצפייה לחץ כאן</a>
+             </h1>
               <v-form v-model="isFormValid">
+                <v-text-field
+                  v-model="contactName"
+                  :rules="requiredField"
+                  label='איש קשר'
+                  required
+                ></v-text-field>
                 <v-text-field
                   name="to"
                   label="נמען"
@@ -19,7 +28,7 @@
                   required
                 ></v-text-field>
                 <v-spacer></v-spacer>
-                <v-flex xs12>
+                <!-- <v-flex xs12>
                   <v-dialog
                     ref="dialog"
                     v-model="modal"
@@ -43,7 +52,7 @@
                       <v-btn flat color="primary" @click="$refs.dialog.save(date)">OK</v-btn>
                     </v-date-picker>
                   </v-dialog>
-                </v-flex>
+                </v-flex> -->
                 <v-textarea
                   outline
                   name="description"
@@ -76,16 +85,20 @@
 
 <script>
 import ApiConsumer from "../mixins/apiconsumer.mixin";
+import * as config from '../config.json';
 export default {
   data: () => ({
-    date: null,
+    contactName: "",
+    date: new Date().toISOString().split("T")[0],
     recipientName: "",
     recipientEmail: "",
     description: "",
     comments: "",
     amount: null,
+    pdfLink: "",
     menu: false,
     modal: false,
+    isFormSubmitted: false,
     isFormValid: false,
     requiredField: [v => !!v || "שדה חובה"],
     email: "",
@@ -94,24 +107,26 @@ export default {
       v => /\S+@\S+\.\S+/.test(v) || "אימייל צריך להיות תקין"
     ]
   }),
-  // mounted() {
-  //   this.$validator.localize("en", this.dictionary);
-  // },
   methods: {
     submit() {
       if (this.isFormValid) {
         this.submitDP(
+          this.contactName,
           this.recipientName,
           this.recipientEmail,
           this.date,
           this.description,
           this.amount,
           this.comments
-        ).then(() => {
-          document.querySelector('form').style.opacity = 0;
+        ).then((result) => {
+          this.isFormSubmitted = true;
+          console.log(result.data.id);
+          this.pdfLink = `${config.apiUrl}/dp/${result.data.id}.pdf`;
+          document.querySelector("form").style.opacity = 0;
           setTimeout(() => {
-            document.querySelector('form').style.height = 0;
-            document.querySelector('.ok-message').style.opacity = 1;
+            document.querySelector("form").style.height = 0;
+            document.querySelector(".ok-message").style.opacity = 1;
+            document.querySelector(".ok-message").style.width = "auto";
           }, 500);
         });
       }
@@ -136,6 +151,7 @@ form * {
 .ok-message {
   height: 0;
   opacity: 0;
+  width: 0;
   transition: all 0.5s;
 }
 h1,

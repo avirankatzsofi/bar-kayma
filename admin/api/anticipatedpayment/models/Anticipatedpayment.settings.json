@@ -60,6 +60,10 @@
     },
     "accountNumber": {
       "type": "integer"
+    },
+    "contact": {
+      "default": "",
+      "type": "string"
     }
   }
 }

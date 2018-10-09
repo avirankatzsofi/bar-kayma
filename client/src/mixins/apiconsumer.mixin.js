@@ -36,8 +36,9 @@ export default {
          * @param {number} amount Payment sum
          * @param {string} comments DP notes
          */
-        submitDP(recipientName, recipientEmail, date, description, amount, comments) {
+        submitDP(contact, recipientName, recipientEmail, date, description, amount, comments) {
             return Axios.post(`${apiUrl}/anticipatedpayment`, {
+                contact: contact,
                 recipientName: recipientName,
                 user: sessionStorage.getItem(sessionStorageKeys.uid),
                 recipientEmail: recipientEmail,
