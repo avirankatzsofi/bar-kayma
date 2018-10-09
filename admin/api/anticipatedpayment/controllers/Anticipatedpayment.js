@@ -98,7 +98,6 @@ module.exports = {
 };
 
 function parseTemplate(templateFile, doc) {
-  let result = null;
   return new Promise((resolve) => {
     fs.readFile(templateFile, 'utf8', (err, data) => {
       const regex = /{{[a-zA-Z0-9\.]+}}/g;
