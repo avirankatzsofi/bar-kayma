@@ -4,21 +4,21 @@
       <v-layout column align-center justify-center>
          <v-flex xs12 sm8 md4>
            <h1 class="ok-message" v-if="isFormSubmitted">
-             הטופס נשלח לכתובת {{recipientEmail}}
-             <a :href="pdfLink">לצפייה לחץ כאן</a>
+             הטופס נשלח לכתובת {{recipientEmail}}<br/>
+             <a :href="pdfLink" target="blank">לצפייה לחץ כאן</a>
              </h1>
               <v-form v-model="isFormValid">
+                <v-text-field
+                  name="to"
+                  label="שם הלקוח"
+                  v-model="recipientName"
+                  :rules="requiredField"
+                  required
+                ></v-text-field>
                 <v-text-field
                   v-model="contactName"
                   :rules="requiredField"
                   label='איש קשר'
-                  required
-                ></v-text-field>
-                <v-text-field
-                  name="to"
-                  label="נמען"
-                  v-model="recipientName"
-                  :rules="requiredField"
                   required
                 ></v-text-field>
                 <v-text-field
