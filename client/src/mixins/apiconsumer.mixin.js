@@ -18,14 +18,14 @@ export default {
                     identifier: username,
                     password: password
                 });
+                sessionStorage.setItem(sessionStorageKeys.jwt, result.data.jwt);
+                sessionStorage.setItem(sessionStorageKeys.uid, result.data.user._id);
+                sessionStorage.setItem(sessionStorageKeys.uFullName, `${result.data.user.firstName} ${result.data.user.lastName}`);
+                sessionStorage.setItem(sessionStorageKeys.uProject, result.data.user.project);
             }
             catch (reason) {
-                result = console.log(reason);
+                console.log(reason);
             }
-            sessionStorage.setItem(sessionStorageKeys.jwt, result.data.jwt);
-            sessionStorage.setItem(sessionStorageKeys.uid, result.data.user._id);
-            sessionStorage.setItem(sessionStorageKeys.uFullName, `${result.data.user.firstName} ${result.data.user.lastName}`);
-            sessionStorage.setItem(sessionStorageKeys.uProject, result.data.user.project);
         },
         /**
          * Submit the DP to the server
