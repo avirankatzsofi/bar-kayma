@@ -64,23 +64,38 @@
         <v-flex xs12 md12></v-flex>
         <v-flex xs12 md12></v-flex>
         <v-flex xs12 md12>
-          <v-data-table
-            :headers="headers"
-            :items="filteredPayments"
-            class="elevation-1 responsive-table"
-            :rows-per-page-items="[10]"
-          >
-            <template slot="items" slot-scope="props">
-              <td>{{ props.item.recipientName }}</td>
-              <td>{{ props.item.recipientEmail }}</td>
-              <td>{{ new Date(props.item.date).toLocaleDateString('he') }}</td>
-              <td>{{ props.item.description }}</td>
-              <td>{{ props.item.amount }}</td>
-              <td>{{ props.item.comments }}</td>
-              <td>{{ props.item.status ==  status.unpayed ? "לא שולם" : "שולם"}}</td>
-              <td><a :href="apiUrl + '/dp/' + props.item._id + '.pdf'">{{ props.item.id }}</a></td>
-            </template>
-          </v-data-table>
+          <v-card>
+            <v-card-title>
+              פרויקט: {{project}}
+              <v-spacer></v-spacer>
+              <v-text-field
+                v-model="search"
+                append-icon="search"
+                label="חיפוש"
+                single-line
+                hide-details
+              ></v-text-field>
+            </v-card-title>
+            <v-data-table
+              :headers="headers"
+              :items="filteredPayments"
+              class="responsive-table"
+              :search="search"
+              :rows-per-page-items="[10]"
+              no-results-text="לא נמצאו תשלומים"
+            >
+              <template slot="items" slot-scope="props">
+                <td>{{ props.item.recipientName }}</td>
+                <td>{{ props.item.recipientEmail }}</td>
+                <td>{{ new Date(props.item.date).toLocaleDateString('he') }}</td>
+                <td>{{ props.item.description }}</td>
+                <td>{{ props.item.amount }}</td>
+                <td>{{ props.item.comments }}</td>
+                <td>{{ props.item.status ==  status.unpayed ? "לא שולם" : "שולם"}}</td>
+                <td><a :href="apiUrl + '/dp/' + props.item._id + '.pdf'">{{ props.item.id }}</a></td>
+              </template>
+            </v-data-table>
+          </v-card>
         </v-flex>
         <v-flex xs12 md12></v-flex>
         <v-flex xs12 md12></v-flex>
@@ -96,6 +111,7 @@ import * as config from "../config.json";
 export default {
   data() {
     return {
+      project: sessionStorage.getItem(config.sessionStorageKeys.uProject),
       apiUrl: config.apiUrl,
       status: {
         payed: "Payed",
@@ -117,7 +133,8 @@ export default {
         endDateISO: null,
         status: null,
         startDateFormatted: "",
-      }
+      },
+      search: ''
     };
   },
   mounted() {
@@ -131,7 +148,7 @@ export default {
       return this.filter.startDateISO && new Date(this.filter.startDateISO).toLocaleDateString('he-IL');
     },
     total() {
-      return this.payments.reduce((p1, p2) => p1 + p2.amount, 0);
+      return this.filteredPayments.reduce((p1, p2) => p1 + p2.amount, 0);
     },
     filteredPayments() {
       return this.payments.filter(

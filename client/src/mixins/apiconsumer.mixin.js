@@ -2,11 +2,7 @@ import Axios from "axios";
 import * as config from '../config.json';
 
 const apiUrl = config.apiUrl;
-const sessionStorageKeys = {
-    jwt: 'jwt',
-    uid: 'uid',
-    uFullName: 'uFullName'
-};
+const sessionStorageKeys = config.sessionStorageKeys;
 
 export default {
     methods: {
@@ -15,17 +11,21 @@ export default {
          * @param {string} username The username
          * @param {string} password The password
          */
-        login(username, password) {
-            return Axios.post(`${apiUrl}/auth/local`, {
-                identifier: username,
-                password: password
-            })
-                .catch(reason => console.log(reason))
-                .then(result => {
-                    sessionStorage.setItem(sessionStorageKeys.jwt, result.data.jwt);
-                    sessionStorage.setItem(sessionStorageKeys.uid, result.data.user._id);
-                    sessionStorage.setItem(sessionStorageKeys.uFullName, `${result.data.user.firstName} ${result.data.user.lastName}`);
+        async login(username, password) {
+            let result;
+            try {
+                result = await Axios.post(`${apiUrl}/auth/local`, {
+                    identifier: username,
+                    password: password
                 });
+            }
+            catch (reason) {
+                result = console.log(reason);
+            }
+            sessionStorage.setItem(sessionStorageKeys.jwt, result.data.jwt);
+            sessionStorage.setItem(sessionStorageKeys.uid, result.data.user._id);
+            sessionStorage.setItem(sessionStorageKeys.uFullName, `${result.data.user.firstName} ${result.data.user.lastName}`);
+            sessionStorage.setItem(sessionStorageKeys.uProject, result.data.user.project);
         },
         /**
          * Submit the DP to the server
