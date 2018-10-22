@@ -12,9 +12,8 @@ export default {
          * @param {string} password The password
          */
         async login(username, password) {
-            let result;
             try {
-                result = await Axios.post(`${apiUrl}/auth/local`, {
+                const result = await Axios.post(`${apiUrl}/auth/local`, {
                     identifier: username,
                     password: password
                 });
@@ -22,9 +21,10 @@ export default {
                 sessionStorage.setItem(sessionStorageKeys.uid, result.data.user._id);
                 sessionStorage.setItem(sessionStorageKeys.uFullName, `${result.data.user.firstName} ${result.data.user.lastName}`);
                 sessionStorage.setItem(sessionStorageKeys.uProject, result.data.user.project);
+                sessionStorage.setItem(sessionStorageKeys.uIsSystemManager, result.data.user.role.name === 'System Manager');
             }
             catch (reason) {
-                console.log(reason);
+                throw reason;
             }
         },
         /**

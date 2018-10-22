@@ -53,7 +53,8 @@ export default {
     onLogin() {
       this.login(this.username, this.password)
         .then(() => this.$router.push("anticipated-payments"))
-        .catch(() => {
+        .catch((reason) => {
+          console.error(reason);
           this.isLoginFailure = true;
           this.$refs.form.validate();
         });
