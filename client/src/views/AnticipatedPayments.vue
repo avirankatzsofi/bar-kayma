@@ -22,7 +22,6 @@
               slot="activator" 
               v-model="startDateFormatted"
               label="מתאריך"
-              prepend-icon="event"
             ></v-text-field>
             <v-date-picker v-model="filter.startDateISO" no-title @input="startDateMenu = false"></v-date-picker>
           </v-menu>
@@ -44,18 +43,13 @@
               slot="activator" 
               v-model="endDateFormatted"
               label="עד תאריך"
-              prepend-icon="event"
             ></v-text-field>
             <v-date-picker v-model="filter.endDateISO" no-title @input="endDateMenu = false"></v-date-picker>
           </v-menu>
         </v-flex>
         <v-flex xs12 md3>
           <v-select
-            :items="[
-              {text: 'הכל', value: null}, 
-              {text: 'שולם', value: status.payed}, 
-              {text: 'לא שולם', value: status.unpayed}
-            ]"
+            :items="[{text: 'הכל', value: null}, ...selects.statuses]"
             v-model="filter.status"
             label="סטטוס"
           ></v-select>
@@ -66,7 +60,12 @@
         <v-flex xs12 md12>
           <v-card>
             <v-card-title>
-              פרויקט: {{project}}
+              <span v-if="!uIsSystemManager">פרויקט: {{project}}</span>
+              <span v-else><v-select
+                :items="selects.projects"
+                v-model="filter.project"
+                label="פרויקט"
+              ></v-select></span>
               <v-spacer></v-spacer>
               <v-text-field
                 v-model="search"
@@ -85,14 +84,67 @@
               no-results-text="לא נמצאו תשלומים"
             >
               <template slot="items" slot-scope="props">
-                <td>{{ props.item.recipientName }}</td>
-                <td>{{ props.item.recipientEmail }}</td>
-                <td>{{ new Date(props.item.date).toLocaleDateString('he') }}</td>
-                <td>{{ props.item.description }}</td>
-                <td>{{ props.item.amount }}</td>
-                <td>{{ props.item.comments }}</td>
-                <td>{{ props.item.status ==  status.unpayed ? "לא שולם" : "שולם"}}</td>
-                <td><a :href="apiUrl + '/dp/' + props.item._id + '.pdf'">{{ props.item.id }}</a></td>
+                <tr @click="if (uIsSystemManager) props.expanded = !props.expanded">
+                  <td>{{ props.item.recipientName }}</td>
+                  <td>{{ props.item.recipientEmail }}</td>
+                  <td>{{ new Date(props.item.date).toLocaleDateString('he') }}</td>
+                  <td>{{ props.item.description }}</td>
+                  <td>{{ props.item.amount }}</td>
+                  <td>{{ props.item.comments }}</td>
+                  <td>{{ selects.statuses.find(status => status.value === props.item.status).text }}</td>
+                  <td><a :href="apiUrl + '/dp/' + props.item._id + '.pdf'">{{ props.item.id }}</a></td>
+                </tr>
+              </template>
+              <template slot="expand" slot-scope="props" v-if="uIsSystemManager">
+                <v-card flat>
+                  <v-card-text>
+                    <v-layout align-center row wrap justify-space-around>
+                      <v-flex xs12 md3>
+                        <v-select
+                          :items="selects.statuses"
+                          v-model="props.item.status"
+                          label="סטטוס"
+                        ></v-select>
+                      </v-flex>
+                      <v-flex xs12 md3>
+                        <v-text-field
+                          name="amount"
+                          label="סכום ששולם"
+                          suffix="₪"
+                          mask="#######"
+                          v-model="props.item.sumPayed"
+                        ></v-text-field>
+                      </v-flex>
+                      <v-flex xs12 md3>
+                        <v-text-field
+                          name="receiptNumber"
+                          label="מספר קבלה"
+                          mask="#######"
+                          v-model="props.item.receiptNumber"
+                        ></v-text-field>
+                      </v-flex>
+                    </v-layout>
+                    <v-layout row wrap justify-space-around>
+                      <v-flex xs12 md3>
+                        <v-select
+                          :items="selects.paymentTypes"
+                          v-model="props.item.type"
+                          label="אופן תשלום"
+                        ></v-select>
+                      </v-flex>
+                      <v-flex xs12 md3>
+                        <v-select
+                          :items="selects.accountNumbers"
+                          v-model="props.item.accountNumber"
+                          label="סעיף תקציבי"
+                        ></v-select>
+                      </v-flex>
+                      <v-flex xs12 md3>
+                        
+                      </v-flex>
+                    </v-layout>
+                  </v-card-text>
+                </v-card>
               </template>
             </v-data-table>
           </v-card>
@@ -113,10 +165,6 @@ export default {
     return {
       project: sessionStorage.getItem(config.sessionStorageKeys.uProject),
       apiUrl: config.apiUrl,
-      status: {
-        payed: "Payed",
-        unpayed: "Unpayed"
-      },
       headers: [
         { text: "שם נמען", value: "recipientName" },
         { text: "אימייל נמען", value: "recipientEmail" },
@@ -133,32 +181,90 @@ export default {
         endDateISO: null,
         status: null,
         startDateFormatted: "",
+        project: null
       },
-      search: ''
+      selects: {
+        projects: [{ text: "הכל", value: null }],
+        statuses: [
+          { value: "Payed", text: "שולם" },
+          { value: "Unpayed", text: "לא שולם" },
+          { value: "Cancelled", text: "מבוטל" }
+        ],
+        paymentTypes: [
+          { value: "Cheque", text: "צ'ק" },
+          { value: "Bank Transfer", text: "העברה בנקאית" },
+          { value: "Cash", text: "מזומן" },
+          { value: "Defrayal", text: "סליקה" },
+          { value: "Eventer", text: "Eventer" },
+          { value: "Other", text: "אחר" }
+        ],
+        accountNumbers: null,
+      },
+      search: "",
+      startDateMenu: null,
+      endDateMenu: null,
+      uIsSystemManager:
+        sessionStorage.getItem(config.sessionStorageKeys.uIsSystemManager) ==
+        "true"
     };
   },
   mounted() {
-    this.getAnticipatedPayments().then(result => (this.payments = result.data));
+    this.getAnticipatedPayments().then(result => {
+      this.payments = result.data;
+      if (!this.uIsSystemManager) return;
+      let uniqueProjects = {};
+      result.data.forEach(payment => {
+        const project = payment.user.project;
+        const projectCode = payment.user.projectCode;
+        if (!uniqueProjects[projectCode]) {
+          uniqueProjects[projectCode] = true;
+          this.selects.projects.push({
+            text: project,
+            value: projectCode
+          });
+        }
+      });
+    });
+    this.getAccountNumbers().then(result => {
+      this.selects.accountNumbers = result;
+    })
   },
   computed: {
     endDateFormatted() {
-      return this.filter.endDateISO && new Date(this.filter.endDateISO).toLocaleDateString('he-IL');
+      return (
+        this.filter.endDateISO &&
+        new Date(this.filter.endDateISO).toLocaleDateString("he-IL")
+      );
     },
     startDateFormatted() {
-      return this.filter.startDateISO && new Date(this.filter.startDateISO).toLocaleDateString('he-IL');
+      return (
+        this.filter.startDateISO &&
+        new Date(this.filter.startDateISO).toLocaleDateString("he-IL")
+      );
     },
     total() {
       return this.filteredPayments.reduce((p1, p2) => p1 + p2.amount, 0);
     },
     filteredPayments() {
-      return this.payments.filter(
-        (payment) => {
-          const statusFilterPass = !this.filter.status || payment.status == this.filter.status;
-          const startDateFilterPassed = !this.filter.startDateISO || new Date(this.filter.startDateISO) <= new Date(payment.date);
-          const endDateFilterPassed = !this.filter.endDateISO || new Date(this.filter.endDateISO) >= new Date(payment.date);
-          return statusFilterPass && startDateFilterPassed && endDateFilterPassed;
-        }
-      );
+      return this.payments.filter(payment => {
+        const statusFilterPassed =
+          !this.filter.status || payment.status == this.filter.status;
+        const startDateFilterPassed =
+          !this.filter.startDateISO ||
+          new Date(this.filter.startDateISO) <= new Date(payment.date);
+        const endDateFilterPassed =
+          !this.filter.endDateISO ||
+          new Date(this.filter.endDateISO) >= new Date(payment.date);
+        const projectFilterPassed =
+          !this.filter.project ||
+          this.filter.project === payment.user.projectCode;
+        return (
+          statusFilterPassed &&
+          startDateFilterPassed &&
+          endDateFilterPassed &&
+          projectFilterPassed
+        );
+      });
     }
   },
   mixins: [ApiConsumer]

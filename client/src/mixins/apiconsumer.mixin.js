@@ -21,7 +21,7 @@ export default {
                 sessionStorage.setItem(sessionStorageKeys.uid, result.data.user._id);
                 sessionStorage.setItem(sessionStorageKeys.uFullName, `${result.data.user.firstName} ${result.data.user.lastName}`);
                 sessionStorage.setItem(sessionStorageKeys.uProject, result.data.user.project);
-                sessionStorage.setItem(sessionStorageKeys.uIsSystemManager, result.data.user.role.name === 'System Manager');
+                sessionStorage.setItem(sessionStorageKeys.uIsSystemManager, ['System Manager', 'Administrator'].includes(result.data.user.role.name));
             }
             catch (reason) {
                 throw reason;
@@ -57,11 +57,29 @@ export default {
          * Get anticipated payments for current user
          */
         getAnticipatedPayments() {
-            return Axios.get(`${apiUrl}/anticipatedpayment?user=${sessionStorage.getItem(sessionStorageKeys.uid)}&_limit=9999`, {
+            const params = sessionStorage.getItem(sessionStorageKeys.uIsSystemManager) == 'true' ?
+                '_limit=9999' : `user=${sessionStorage.getItem(sessionStorageKeys.uid)}&_limit=9999`
+            return Axios.get(`${apiUrl}/anticipatedpayment?${params}`, {
                 headers: {
                     Authorization: `Bearer ${sessionStorage.getItem(sessionStorageKeys.jwt)}`
                 }
             });
+        },
+        /**
+         * Get account numbers of anticipated payment model
+         */
+        async getAccountNumbers() {
+            try {
+                const result = await Axios.get(`${apiUrl}/content-type-builder/models/anticipatedpayment`, {
+                    headers: {
+                        Authorization: `Bearer ${sessionStorage.getItem(sessionStorageKeys.jwt)}`
+                    }
+                });
+                return result.data.model.attributes.find(attribute => attribute.name === "accountNumber").params.enum
+            }
+            catch (reason) {
+                throw reason;
+            }
         }
     }
 }
