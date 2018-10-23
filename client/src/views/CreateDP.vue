@@ -9,6 +9,7 @@
              </h1>
               <v-form v-model="isFormValid">
                 <v-text-field
+                  outline
                   name="to"
                   label="שם הלקוח"
                   v-model="recipientName"
@@ -16,43 +17,20 @@
                   required
                 ></v-text-field>
                 <v-text-field
+                  outline
                   v-model="contactName"
                   :rules="requiredField"
                   label='איש קשר'
                   required
                 ></v-text-field>
                 <v-text-field
+                  outline
                   v-model="recipientEmail"
                   :rules="emailRules"
                   label='דוא"ל נמען'
                   required
                 ></v-text-field>
                 <v-spacer></v-spacer>
-                <!-- <v-flex xs12>
-                  <v-dialog
-                    ref="dialog"
-                    v-model="modal"
-                    :rules="requiredField"
-                    :return-value.sync="date"
-                    persistent
-                    lazy
-                    full-width
-                    width="290px"
-                  >
-                    <v-text-field class="date-picker"
-                      slot="activator"
-                      v-model="date"
-                      :rules="requiredField"
-                      label="תאריך"
-                      readonly
-                    ></v-text-field>
-                    <v-date-picker v-model="date" type="date" scrollable>
-                      <v-spacer></v-spacer>
-                      <v-btn flat color="primary" @click="modal = false">Cancel</v-btn>
-                      <v-btn flat color="primary" @click="$refs.dialog.save(date)">OK</v-btn>
-                    </v-date-picker>
-                  </v-dialog>
-                </v-flex> -->
                 <v-textarea
                   outline
                   name="description"
@@ -61,6 +39,7 @@
                   label="תיאור"
                 ></v-textarea>
                 <v-text-field
+                  outline
                   name="amount"
                   mask="#######"
                   v-model="amount"
