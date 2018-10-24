@@ -140,7 +140,25 @@
                         ></v-select>
                       </v-flex>
                       <v-flex xs12 md3>
-                        
+                          <v-menu
+                            ref="paymentDateMenu"
+                            :close-on-content-click="false"
+                            v-model="paymentDateMenu"
+                            :nudge-right="40"
+                            lazy
+                            transition="scale-transition"
+                            offset-y
+                            full-width
+                            max-width="290px"
+                            min-width="290px"
+                          >
+                            <v-text-field
+                              slot="activator" 
+                              v-model="props.item.paymentDate"
+                              label="תאריך תשלום"
+                            ></v-text-field>
+                            <v-date-picker v-model="props.item.paymentDate" no-title @input="paymentDateMenu = false"></v-date-picker>
+                          </v-menu>                        
                       </v-flex>
                     </v-layout>
                   </v-card-text>
@@ -198,22 +216,22 @@ export default {
           { value: "Eventer", text: "Eventer" },
           { value: "Other", text: "אחר" }
         ],
-        accountNumbers: null,
+        accountNumbers: null
       },
       search: "",
       startDateMenu: null,
       endDateMenu: null,
+      paymentDateMenu: null,
       uIsSystemManager:
         sessionStorage.getItem(config.sessionStorageKeys.uIsSystemManager) ==
         "true"
     };
   },
-  mounted() {
-    this.getAnticipatedPayments().then(result => {
-      this.payments = result.data;
-      if (!this.uIsSystemManager) return;
+  async mounted() {
+    this.payments = (await this.getAnticipatedPayments()).data;
+    if (this.uIsSystemManager) {
       let uniqueProjects = {};
-      result.data.forEach(payment => {
+      this.payments.forEach(payment => {
         const project = payment.user.project;
         const projectCode = payment.user.projectCode;
         if (!uniqueProjects[projectCode]) {
@@ -224,10 +242,8 @@ export default {
           });
         }
       });
-    });
-    this.getAccountNumbers().then(result => {
-      this.selects.accountNumbers = result;
-    })
+    }
+    this.selects.accountNumbers = await this.getAccountNumbers();
   },
   computed: {
     endDateFormatted() {
