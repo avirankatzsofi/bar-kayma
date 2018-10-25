@@ -27,9 +27,13 @@
     <v-toolbar app v-if="displayFrame">
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-toolbar-title v-text="title"></v-toolbar-title>
+      <v-spacer></v-spacer>
+        <v-btn :loading="canSave === null" flat icon color="secondary" :disabled="!canSave" v-if="isSaveVisible" @click="onSave">
+          <v-icon>{{canSave ? 'save' : 'done'}}</v-icon>
+        </v-btn>
     </v-toolbar>
     <v-content>
-      <router-view/>
+      <router-view @canSaveChanged="setCanSave" ref="routerView"/>
     </v-content>
   </v-app>
 </template>
@@ -44,15 +48,29 @@
 
 <script>
 import ApiConsumer from './mixins/apiconsumer.mixin';
+import config from './config.json';
+
+const sessionStorageKeys = config.sessionStorageKeys;
+
 export default {
   name: "App",
   computed: {
+    /**
+     * Should title bar and navigation drawer be displayed
+     */
     displayFrame() {
       return this.$route.path != '/signin';
+    },
+    /**
+     * Should save button be visible
+     */
+    isSaveVisible() {
+      return sessionStorage.getItem(sessionStorageKeys.uIsSystemManager) == "true" && this.$route.path == "/anticipated-payments";
     }
   },
   data() {
     return {
+      canSave: false,
       drawer: true,
       items: [
         {
@@ -69,6 +87,21 @@ export default {
       right: true,
       title: "בנקיימא"
     };
+  },
+  methods: {
+    /**
+     * Sets the canSave data property according to the data from anticipated payments component.
+     * @param {boolean} value Value to set
+     */
+    setCanSave(value) {
+      this.canSave = value;
+    },
+    /**
+     * Called when the user clicks the save button.
+     */
+    onSave() {
+      this.$refs.routerView.savePaymentsDelta();
+    }
   },
   mounted() {
     if (sessionStorage.getItem('jwt') == null) {

@@ -72,7 +72,6 @@
                 append-icon="search"
                 label="חיפוש"
                 single-line
-                hide-details
               ></v-text-field>
             </v-card-title>
             <v-data-table
@@ -84,7 +83,7 @@
               no-results-text="לא נמצאו תשלומים"
             >
               <template slot="items" slot-scope="props">
-                <tr @click="if (uIsSystemManager) props.expanded = !props.expanded">
+                <tr @click="onRowClick(props)">
                   <td>{{ props.item.recipientName }}</td>
                   <td>{{ props.item.recipientEmail }}</td>
                   <td>{{ new Date(props.item.date).toLocaleDateString('he') }}</td>
@@ -102,7 +101,8 @@
                       <v-flex xs12 md3>
                         <v-select
                           :items="selects.statuses"
-                          v-model="props.item.status"
+                          v-model="currentExpandedPayment.status"
+                          @change="onPaymentEdited"
                           label="סטטוס"
                         ></v-select>
                       </v-flex>
@@ -112,7 +112,8 @@
                           label="סכום ששולם"
                           suffix="₪"
                           mask="#######"
-                          v-model="props.item.sumPayed"
+                          v-model="currentExpandedPayment.sumPayed"
+                          @input="onPaymentEdited"
                         ></v-text-field>
                       </v-flex>
                       <v-flex xs12 md3>
@@ -120,7 +121,8 @@
                           name="receiptNumber"
                           label="מספר קבלה"
                           mask="#######"
-                          v-model="props.item.receiptNumber"
+                          v-model="currentExpandedPayment.receiptNumber"
+                          @input="onPaymentEdited"
                         ></v-text-field>
                       </v-flex>
                     </v-layout>
@@ -128,14 +130,16 @@
                       <v-flex xs12 md3>
                         <v-select
                           :items="selects.paymentTypes"
-                          v-model="props.item.type"
+                          v-model="currentExpandedPayment.type"
+                          @change="onPaymentEdited"
                           label="אופן תשלום"
                         ></v-select>
                       </v-flex>
                       <v-flex xs12 md3>
                         <v-select
                           :items="selects.accountNumbers"
-                          v-model="props.item.accountNumber"
+                          v-model="currentExpandedPayment.accountNumber"
+                          @change="onPaymentEdited"
                           label="סעיף תקציבי"
                         ></v-select>
                       </v-flex>
@@ -154,10 +158,11 @@
                           >
                             <v-text-field
                               slot="activator" 
-                              v-model="props.item.paymentDate"
+                              v-model="currentExpandedPaymentDateFormatted"
+                              @blur="onPaymentEdited"
                               label="תאריך תשלום"
                             ></v-text-field>
-                            <v-date-picker v-model="props.item.paymentDate" no-title @input="paymentDateMenu = false"></v-date-picker>
+                            <v-date-picker v-model="currentExpandedPayment.paymentDate" no-title @input="paymentDateMenu = false"></v-date-picker>
                           </v-menu>                        
                       </v-flex>
                     </v-layout>
@@ -224,10 +229,50 @@ export default {
       paymentDateMenu: null,
       uIsSystemManager:
         sessionStorage.getItem(config.sessionStorageKeys.uIsSystemManager) ==
-        "true"
+        "true",
+      currentExpandedPayment: null,
+      paymentsDelta: {}
     };
   },
+  methods: {
+    /**
+     * Called when a row is clicked.
+     * @param {any} props props object of the clicked row, which contains the payment object and the expanded state
+     */
+    onRowClick(props) {
+      if (!this.uIsSystemManager) return;
+      props.expanded = !props.expanded;
+      if (props.expanded) {
+        this.currentExpandedPayment =
+          this.paymentsDelta[props.item.id] ||
+          JSON.parse(JSON.stringify(props.item));
+      } else {
+        this.currentExpandedPayment = null;
+      }
+    },
+    /**
+     * Called when the user expands and edits a paymen
+     */
+    onPaymentEdited() {
+      if (!this.paymentsDelta[this.currentExpandedPayment.id])
+        this.paymentsDelta[
+          this.currentExpandedPayment.id
+        ] = this.currentExpandedPayment;
+      this.$emit("canSaveChanged", true);
+    },
+    /**
+     * Sends an API call to save the payments delta
+     */
+    async savePaymentsDelta() {
+      this.$emit("canSaveChanged", null);
+      await this.updateAnticipatedPayments(Object.values(this.paymentsDelta));
+      this.paymentsDelta = {};
+      this.payments = (await this.getAnticipatedPayments()).data;
+      this.$emit("canSaveChanged", false);
+    }
+  },
   async mounted() {
+    this.$emit("canSaveChanged", false);
     this.payments = (await this.getAnticipatedPayments()).data;
     if (this.uIsSystemManager) {
       let uniqueProjects = {};
@@ -242,8 +287,8 @@ export default {
           });
         }
       });
+      this.selects.accountNumbers = await this.getAccountNumbers();
     }
-    this.selects.accountNumbers = await this.getAccountNumbers();
   },
   computed: {
     endDateFormatted() {
@@ -257,6 +302,13 @@ export default {
         this.filter.startDateISO &&
         new Date(this.filter.startDateISO).toLocaleDateString("he-IL")
       );
+    },
+    currentExpandedPaymentDateFormatted() {
+      return this.currentExpandedPayment.paymentDate
+        ? new Date(this.currentExpandedPayment.paymentDate).toLocaleDateString(
+            "he-IL"
+          )
+        : null;
     },
     total() {
       return this.filteredPayments.reduce((p1, p2) => p1 + p2.amount, 0);

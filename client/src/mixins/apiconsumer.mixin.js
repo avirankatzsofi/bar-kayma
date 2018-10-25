@@ -3,6 +3,7 @@ import * as config from '../config.json';
 
 const apiUrl = config.apiUrl;
 const sessionStorageKeys = config.sessionStorageKeys;
+const anticipatedPaymentsEndpoint = 'anticipatedpayment';
 
 export default {
     methods: {
@@ -37,7 +38,7 @@ export default {
          * @param {string} comments DP notes
          */
         submitDP(contact, recipientName, recipientEmail, date, description, amount, comments) {
-            return Axios.post(`${apiUrl}/anticipatedpayment`, {
+            return Axios.post(`${apiUrl}/${anticipatedPaymentsEndpoint}`, {
                 contact: contact,
                 recipientName: recipientName,
                 user: sessionStorage.getItem(sessionStorageKeys.uid),
@@ -59,7 +60,7 @@ export default {
         getAnticipatedPayments() {
             const params = sessionStorage.getItem(sessionStorageKeys.uIsSystemManager) == 'true' ?
                 '_limit=9999' : `user=${sessionStorage.getItem(sessionStorageKeys.uid)}&_limit=9999`
-            return Axios.get(`${apiUrl}/anticipatedpayment?${params}`, {
+            return Axios.get(`${apiUrl}/${anticipatedPaymentsEndpoint}?${params}`, {
                 headers: {
                     Authorization: `Bearer ${sessionStorage.getItem(sessionStorageKeys.jwt)}`
                 }
@@ -70,7 +71,7 @@ export default {
          */
         async getAccountNumbers() {
             try {
-                const result = await Axios.get(`${apiUrl}/content-type-builder/models/anticipatedpayment`, {
+                const result = await Axios.get(`${apiUrl}/content-type-builder/models/${anticipatedPaymentsEndpoint}`, {
                     headers: {
                         Authorization: `Bearer ${sessionStorage.getItem(sessionStorageKeys.jwt)}`
                     }
@@ -80,6 +81,27 @@ export default {
             catch (reason) {
                 throw reason;
             }
+        },
+        /**
+         * saves edited payments in strapi
+         * @param {any[]} payments array of edited payments to be saved
+         */
+        async updateAnticipatedPayments(payments) {
+            let failedUpdates = [];
+            for (const payment of payments) {
+                try {
+                    await Axios.put(`${apiUrl}/${anticipatedPaymentsEndpoint}/${payment.id}`, payment, {
+                        headers: {
+                            Authorization: `Bearer ${sessionStorage.getItem(sessionStorageKeys.jwt)}`
+                        }
+                    });
+                } catch (reason) {
+                    console.error(reason);
+                    failedUpdates.push(payment);
+                }
+            }
+            if (failedUpdates.length == 0) return true;
+            this.updateAnticipatedPayments(failedUpdates);
         }
     }
 }
