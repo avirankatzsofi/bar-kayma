@@ -65,7 +65,7 @@ export default {
      * Should save button be visible
      */
     isSaveVisible() {
-      return sessionStorage.getItem(sessionStorageKeys.uIsSystemManager) == "true" && this.$route.path == "/anticipated-payments";
+      return this.$route.path == "/anticipated-payments" && sessionStorage.getItem(sessionStorageKeys.uIsSystemManager) == "true";
     }
   },
   data() {
