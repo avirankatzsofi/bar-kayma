@@ -28,6 +28,10 @@
             float: left;
         }
 
+        .left p {
+            text-align: left;
+        }
+
         div.header {
             display: inline-block;
             width: 100%;
@@ -76,14 +80,15 @@
 
 <body dir="rtl">
     <div class="header">
-        <div class="right">
+        <img class="left" src="http://localhost:1337/images/ant.png" class="left">
+        <div class="left">
+            <br/>
             <p class="bold"><span class="underline">בר-קיימא לתרבות, אמנות, מוסיקה ושלום</span> (ע"ר 580450898)</p>
             <p> ת.ד. 500, ירושלים 9100400</p>
             <p class="quote">"אֲשֶׁר אֵין לָהּ קָצִין שֹׁטֵר וּמֹשֵׁל" - משלי ו'</p>
         </div>
-        <img class="left" src="http://localhost:1337/images/ant.png" class="left">
-        <p>{{date}}</p>
     </div>
+    <p class="align-center">{{date}}</p>
     <br>
     <p><span class="underline bold">לכבוד: </span>{{recipientName}}</p>
     <p>{{contact}} / {{recipientEmail}}</p>
@@ -92,12 +97,12 @@
     <p>אהלן,<br>אבקש תשלום עבור:</p>
     <table>
         <tr>
-            <th style="width:25%">סכום בש"ח</th>
             <th>פירוט</th>
+            <th style="width:25%">סכום בש"ח</th>
         </tr>
         <tr>
-            <td>{{amount}}</td>
             <td>{{description}}</td>
+            <td>{{amount}}</td>
         </tr>
         <tr>
             <td colspan="2">
@@ -125,7 +130,7 @@
         </tr>
         <tr>
             <td colspan="2" class="align-center">
-                או <a href="https://www.google.com/url?q=https://www.myofficeguy.com/p/7kl4r/dpm8d/dpmdi/payment/&sa=D&ust=1537436015745000">בכרטיס
+                או <a href="https://www.myofficeguy.com/p/7kl4r/dpm8d/dpmdi/payment">בכרטיס
                     אשראי</a>
             </td>
         </tr>
@@ -138,9 +143,11 @@
     <br>
     <br>
     <hr>
-    <a href="https://www.google.com/url?q=https://drive.google.com/open?id%3D0B7ICN8W1r7b_S0FXT1ZkQVE0bm8&sa=D&ust=1537436015747000">
-        <h1>לינק למסמכי עמותה: אישור ניכוי מס, ניהול תקין, קיום חשבון בנק וכד'</h1>
-    </a>
+    <h1>
+        <a href="https://drive.google.com/open?id=0B7ICN8W1r7b_S0FXT1ZkQVE0bm8">
+            לינק למסמכי עמותה: אישור ניכוי מס, ניהול תקין, קיום חשבון בנק וכד'
+        </a>
+    </h1>
     <p class="align-center"> office@barkayma.org // barkayma.org </p>
     <div class="footer">
         <div class="right">
