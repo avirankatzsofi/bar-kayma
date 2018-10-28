@@ -41,13 +41,12 @@
                 <v-text-field
                   outline
                   name="amount"
-                  mask="#######"
+                  type="number"
                   v-model="amount"
-                  :rules="requiredField"
+                  :rules="amountRules"
                   label="סכום"
                   suffix="₪"
                 ></v-text-field>
-                
                 <v-textarea
                   outline
                   name="comments"
@@ -64,7 +63,7 @@
 
 <script>
 import ApiConsumer from "../mixins/apiconsumer.mixin";
-import * as config from '../config.json';
+import * as config from "../config.json";
 export default {
   data: () => ({
     contactName: "",
@@ -84,6 +83,10 @@ export default {
     emailRules: [
       v => !!v || "שדה חובה",
       v => /\S+@\S+\.\S+/.test(v) || "אימייל צריך להיות תקין"
+    ],
+    amountRules: [
+      v => !!v || "שדה חובה",
+      v => /^\d+(\.\d{1,2})?$/.test(v) || "סכום לא תקין"
     ]
   }),
   methods: {
@@ -97,9 +100,8 @@ export default {
           this.description,
           this.amount,
           this.comments
-        ).then((result) => {
+        ).then(result => {
           this.isFormSubmitted = true;
-          console.log(result.data.id);
           this.pdfLink = `${config.apiUrl}/dp/${result.data.id}.pdf`;
           document.querySelector("form").style.opacity = 0;
           setTimeout(() => {
@@ -119,6 +121,7 @@ export default {
 <style scoped>
 form {
   transition: all 0.5s;
+  overflow: hidden;
 }
 form * {
   width: 350px;
