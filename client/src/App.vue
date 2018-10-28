@@ -25,12 +25,13 @@
       </v-list>
     </v-navigation-drawer>
     <v-toolbar app v-if="displayFrame">
-      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-toolbar-title v-text="title"></v-toolbar-title>
-      <v-spacer></v-spacer>
+        <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+        <v-toolbar-title v-text="title"></v-toolbar-title>
+        <v-spacer></v-spacer>
         <v-btn :loading="canSave === null" flat icon color="secondary" :disabled="!canSave" v-if="isSaveVisible" @click="onSave">
           <v-icon>{{canSave ? 'save' : 'done'}}</v-icon>
         </v-btn>
+        {{uFullName}}
     </v-toolbar>
     <v-content>
       <router-view @canSaveChanged="setCanSave" ref="routerView"/>
@@ -75,7 +76,7 @@ export default {
       items: [
         {
           icon: "account_balance_wallet",
-          title: "תשלומים צפויים",
+          title: "הכנסות צפויות",
           route: 'anticipated-payments'
         },
         {
@@ -84,6 +85,7 @@ export default {
           route: 'create-dp'
         }
       ],
+      uFullName: sessionStorage.getItem(sessionStorageKeys.uFullName),
       right: true,
       title: "בנקיימא"
     };
