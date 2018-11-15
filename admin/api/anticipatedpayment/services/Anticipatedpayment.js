@@ -112,9 +112,11 @@ module.exports = {
 
   remove: async params => {
     // Select field to populate.
-    const populate = Anticipatedpayment.associations
-      .filter(ast => ast.autoPopulate !== false)
-      .map(ast => ast.alias)
+    const populate = Anticipatedpayment.map(async association => {
+      if (!association.via || !data._id) {
+        return true;
+      }
+    })
       .join(' ');
 
     // Note: To get the full response of Mongo, use the `remove()` method

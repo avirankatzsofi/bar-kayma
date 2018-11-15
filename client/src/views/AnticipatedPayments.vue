@@ -91,7 +91,7 @@
                   <td>{{ props.item.amount }}</td>
                   <td>{{ props.item.comments }}</td>
                   <td>{{ selects.statuses.find(status => status.value === props.item.status).text }}</td>
-                  <td><a :href="apiUrl + '/dp/' + props.item._id + '.pdf'">{{ props.item.id }}</a></td>
+                  <td><a :href="apiUrl + '/dp/' + props.item._id + '.pdf'" target="blank">כניסה לקובץ</a></td>
                 </tr>
               </template>
               <template slot="expand" slot-scope="props" v-if="uIsSystemManager">
@@ -111,7 +111,7 @@
                           name="amount"
                           label="סכום ששולם"
                           suffix="₪"
-                          mask="#######"
+                          type="number"
                           v-model="currentExpandedPayment.sumPayed"
                           @input="onPaymentEdited"
                         ></v-text-field>
