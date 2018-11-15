@@ -326,10 +326,10 @@ export default {
           !this.filter.status || payment.status == this.filter.status;
         const startDateFilterPassed =
           !this.filter.startDateISO ||
-          new Date(this.filter.startDateISO) <= new Date(payment.date);
+          new Date(this.filter.startDateISO) <= new Date(this.filter.status == "Payed" ? payment.paymentDate : payment.date);
         const endDateFilterPassed =
           !this.filter.endDateISO ||
-          new Date(this.filter.endDateISO) >= new Date(payment.date);
+          new Date(this.filter.endDateISO) >= new Date(this.filter.status == "Payed" ? payment.paymentDate : payment.date);
         const projectFilterPassed =
           !this.filter.project ||
           this.filter.project === payment.user.projectCode;
