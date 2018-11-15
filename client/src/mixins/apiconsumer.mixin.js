@@ -20,7 +20,7 @@ export default {
                 });
                 sessionStorage.setItem(sessionStorageKeys.jwt, result.data.jwt);
                 sessionStorage.setItem(sessionStorageKeys.uid, result.data.user._id);
-                sessionStorage.setItem(sessionStorageKeys.uFullName, `${result.data.user.firstName} ${result.data.user.lastName}`);
+                sessionStorage.setItem(sessionStorageKeys.uFullName, `${result.data.user.firstName || ''} ${result.data.user.lastName || ''}`);
                 sessionStorage.setItem(sessionStorageKeys.uProject, result.data.user.project);
                 sessionStorage.setItem(sessionStorageKeys.uIsSystemManager, ['System Manager', 'Administrator'].includes(result.data.user.role.name));
             }
