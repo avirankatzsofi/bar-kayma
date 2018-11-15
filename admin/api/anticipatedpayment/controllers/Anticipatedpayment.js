@@ -109,7 +109,7 @@ function parseTemplate(templateFile, doc) {
         keys.forEach(key => {
           value = value ? value[key] : doc[key];
         });
-        value = value.toLocaleDateString ? value.toLocaleDateString('he-IL') : value;
+        value = value && value.toLocaleDateString ? value.toLocaleDateString('he-IL') : value;
         data = data.split(match).join(value);
       });
       resolve(data);
