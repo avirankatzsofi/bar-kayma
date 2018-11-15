@@ -111,6 +111,7 @@
                           name="amount"
                           label="סכום ששולם"
                           suffix="₪"
+                          :rules="amountRules"
                           type="number"
                           v-model="currentExpandedPayment.sumPayed"
                           @input="onPaymentEdited"
@@ -231,7 +232,11 @@ export default {
         sessionStorage.getItem(config.sessionStorageKeys.uIsSystemManager) ==
         "true",
       currentExpandedPayment: null,
-      paymentsDelta: {}
+      paymentsDelta: {},
+      amountRules: [
+        v => !!v || "שדה חובה",
+        v => /^\d+(\.\d{1,2})?$/.test(v) || "סכום לא תקין"
+      ]
     };
   },
   methods: {
@@ -311,7 +316,9 @@ export default {
         : null;
     },
     total() {
-      return this.filteredPayments.reduce((p1, p2) => p1 + p2.amount, 0);
+      return this.filteredPayments
+        .reduce((p1, p2) => p1 + p2.amount, 0)
+        .toFixed(2);
     },
     filteredPayments() {
       return this.payments.filter(payment => {
