@@ -10,6 +10,13 @@
               <v-form v-model="isFormValid">
                 <v-text-field
                   outline
+                  name="project"
+                  label="פרויקט"
+                  v-model="project"
+                  disabled
+                ></v-text-field>
+                <v-text-field
+                  outline
                   name="to"
                   label="שם הלקוח"
                   v-model="recipientName"
@@ -65,6 +72,9 @@
 import ApiConsumer from "../mixins/apiconsumer.mixin";
 import * as config from "../config.json";
 export default {
+  computed: {
+    project: () => sessionStorage.getItem(config.sessionStorageKeys.uProject)
+  },
   data: () => ({
     contactName: "",
     date: new Date().toISOString().split("T")[0],
