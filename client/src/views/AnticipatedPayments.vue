@@ -3,6 +3,13 @@
     <v-slide-y-transition mode="out-in">
       <v-layout row wrap>
         <v-flex xs12 md3 offset-md1>
+          <v-select
+            :items="[{text: 'הכל', value: null}, ...selects.statuses]"
+            v-model="filter.status"
+            label="סטטוס"
+          ></v-select>
+        </v-flex>
+        <v-flex xs12 md3 offset-md1>
           <v-menu
             ref="startDateMenu"
             :close-on-content-click="false"
@@ -19,7 +26,7 @@
             <v-date-picker v-model="filter.startDateISO" no-title @input="startDateMenu = false"></v-date-picker>
           </v-menu>
         </v-flex>
-        <v-flex xs12 md3 offset-md1>
+        <v-flex xs12 md3>
           <v-menu
             ref="endDateMenu"
             :close-on-content-click="false"
@@ -35,13 +42,6 @@
             <v-text-field slot="activator" v-model="endDateFormatted" label="עד תאריך"></v-text-field>
             <v-date-picker v-model="filter.endDateISO" no-title @input="endDateMenu = false"></v-date-picker>
           </v-menu>
-        </v-flex>
-        <v-flex xs12 md3>
-          <v-select
-            :items="[{text: 'הכל', value: null}, ...selects.statuses]"
-            v-model="filter.status"
-            label="סטטוס"
-          ></v-select>
         </v-flex>
         <v-flex xs12 md12></v-flex>
         <v-flex xs12 md12></v-flex>
