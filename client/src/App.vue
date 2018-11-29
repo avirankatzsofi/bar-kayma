@@ -76,7 +76,7 @@ export default {
       items: [
         {
           icon: "account_balance_wallet",
-          title: "הכנסות צפויות",
+          title: "הכנסות",
           route: 'anticipated-payments'
         },
         {

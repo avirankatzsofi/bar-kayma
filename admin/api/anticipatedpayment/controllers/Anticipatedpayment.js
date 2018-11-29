@@ -67,7 +67,7 @@ module.exports = {
             to: [doc.user.email, doc.recipientEmail],
             from: 'bill@barkayma.org',
             replyTo: 'bill@barkayma.org',
-            subject: `דרישת תשלום עבור ${doc.user.project}`,
+            subject: `דרישת תשלום עבור ${doc.user.project} [BanKayma]`,
             html: emailContent
           }).then(() => console.debug('email sent'))
             .catch(err => console.error(err));
