@@ -78,7 +78,7 @@
                   </td>
                 </tr>
               </template>
-              <template slot="expand" slot-scope="props" v-if="uIsSystemManager">
+              <template slot="expand" slot-scope="props">
                 <v-card flat>
                   <v-card-text>
                     <v-layout align-center row wrap justify-space-around>
@@ -218,6 +218,7 @@ export default {
         status: null,
         startDateFormatted: "",
         project: null,
+        search: null
       },
       selects: {
         projects: [{ text: "הכל", value: null }],
@@ -257,7 +258,6 @@ export default {
      * @param {any} props props object of the clicked row, which contains the payment object and the expanded state
      */
     onRowClick(props) {
-      if (!this.uIsSystemManager) return;
       props.expanded = !props.expanded;
       if (props.expanded) {
         this.currentExpandedPayment =
@@ -333,6 +333,7 @@ export default {
         .toFixed(2);
     },
     filteredPayments() {
+      console.log("search", this.search)
       return this.payments.filter(payment => {
         const statusFilterPassed =
           !this.filter.status || payment.status == this.filter.status;
@@ -351,12 +352,15 @@ export default {
         const projectFilterPassed =
           !this.filter.project ||
           this.filter.project === payment.user.projectCode;
-          
+        // const searchFilterPassed =
+        //   !this.filter.search ||
+        //   this.filter.project === payment.user.projectCode;
         return (
           statusFilterPassed &&
           startDateFilterPassed &&
           endDateFilterPassed &&
           projectFilterPassed
+          // searchFilterPassed
         );
       });
     }
