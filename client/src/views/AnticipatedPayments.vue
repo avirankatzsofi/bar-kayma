@@ -54,25 +54,26 @@
                 <v-select :items="selects.projects" v-model="filter.project" label="פרויקט"></v-select>
               </span>
               <v-spacer></v-spacer>
-              <v-text-field v-model="search" append-icon="search" label="חיפוש" single-line></v-text-field>
+              <v-text-field v-model="filter.search" append-icon="search" label="חיפוש" single-line></v-text-field>
             </v-card-title>
             <v-data-table
               :headers="headers"
               :items="filteredPayments"
               class="responsive-table"
-              :search="search"
+              :search="filter.search"
               :rows-per-page-items="[10]"
               no-results-text="לא נמצאו תשלומים"
             >
               <template slot="items" slot-scope="props">
                 <tr @click="onRowClick(props)">
+                  <td>{{ props.item.placeInLine }}</td>
                   <td>{{ selects.statuses.find(status => status.value === props.item.status).text }}</td>
                   <td>{{ new Date(props.item.date).toLocaleDateString('he') }}</td>
                   <td>{{ props.item.amount }}</td>
                   <td>{{ props.item.recipientName }}</td>
                   <td>{{ props.item.description }}</td>
                   <td>{{ props.item.sumPayed }}</td>
-                  <td>{{ new Date(props.item.paymentDate).toLocaleDateString('he')}}</td>
+                  <td>{{ props.item.paymentDate === null ? null : new Date(props.item.paymentDate).toLocaleDateString('he')}}</td>
                   <td>
                     <a :href="apiUrl + '/dp/' + props.item._id + '.pdf'" target="blank">כניסה לקובץ</a>
                   </td>
@@ -202,6 +203,7 @@ export default {
       apiUrl: config.apiUrl,
 
       headers: [
+        { text: "", value: "" },
         { text: "סטטוס", value: "status" },
         { text: "תאריך", value: "date" },
         { text: "סכום דרישה (₪)", value: "amount" },
@@ -333,7 +335,6 @@ export default {
         .toFixed(2);
     },
     filteredPayments() {
-      console.log("search", this.search)
       return this.payments.filter(payment => {
         const statusFilterPassed =
           !this.filter.status || payment.status == this.filter.status;
@@ -352,14 +353,17 @@ export default {
         const projectFilterPassed =
           !this.filter.project ||
           this.filter.project === payment.user.projectCode;
+          // console.log(this.payment.paymentDate)
         // const searchFilterPassed =
-        //   !this.filter.search ||
+        //   !this.search ||
         //   this.filter.project === payment.user.projectCode;
+        //   console.log(!this.search)
+        // console.log(this.filteredPayments)
         return (
           statusFilterPassed &&
           startDateFilterPassed &&
           endDateFilterPassed &&
-          projectFilterPassed
+          projectFilterPassed 
           // searchFilterPassed
         );
       });

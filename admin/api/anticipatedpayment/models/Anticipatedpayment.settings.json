@@ -9,6 +9,10 @@
     "timestamps": true
   },
   "attributes": {
+    "placeInLine": {
+      "type": "integer",
+      "autoIncrement": true
+    },
     "recipientName": {
       "type": "string",
       "required": true
