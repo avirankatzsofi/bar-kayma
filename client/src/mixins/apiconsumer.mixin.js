@@ -4,6 +4,8 @@ import * as config from '../config.json';
 const apiUrl = config.apiUrl;
 const sessionStorageKeys = config.sessionStorageKeys;
 const anticipatedPaymentsEndpoint = 'anticipatedpayment';
+// const counterEndpoint = 'counters';
+
 
 export default {
     methods: {
@@ -23,8 +25,7 @@ export default {
                 sessionStorage.setItem(sessionStorageKeys.uFullName, `${result.data.user.firstName || ''} ${result.data.user.lastName || ''}`);
                 sessionStorage.setItem(sessionStorageKeys.uProject, result.data.user.project);
                 sessionStorage.setItem(sessionStorageKeys.uIsSystemManager, ['System Manager', 'Administrator'].includes(result.data.user.role.name));
-            }
-            catch (reason) {
+            } catch (reason) {
                 throw reason;
             }
         },
@@ -37,7 +38,7 @@ export default {
          * @param {number} amount Payment sum
          * @param {string} comments DP notes
          */
-        submitDP(contact, recipientName, recipientEmail, date, description, amount, comments) {
+        submitDP(contact, recipientName, recipientEmail, date, description, amount, comments, index) {
             return Axios.post(`${apiUrl}/${anticipatedPaymentsEndpoint}`, {
                 contact: contact,
                 recipientName: recipientName,
@@ -47,12 +48,13 @@ export default {
                 description: description,
                 amount: amount,
                 comments: comments,
-                projectManager: sessionStorage.getItem(sessionStorageKeys.uFullName)
+                projectManager: sessionStorage.getItem(sessionStorageKeys.uFullName),
+                index
             }, {
-                    headers: {
-                        Authorization: `Bearer ${sessionStorage.getItem(sessionStorageKeys.jwt)}`
-                    }
-                });
+                headers: {
+                    Authorization: `Bearer ${sessionStorage.getItem(sessionStorageKeys.jwt)}`
+                }
+            });
         },
         /**
          * Get anticipated payments for current user
@@ -77,8 +79,7 @@ export default {
                     }
                 });
                 return result.data.model.attributes.find(attribute => attribute.name === "accountNumber").params.enum
-            }
-            catch (reason) {
+            } catch (reason) {
                 throw reason;
             }
         },
@@ -102,6 +103,24 @@ export default {
             }
             if (failedUpdates.length == 0) return true;
             this.updateAnticipatedPayments(failedUpdates);
+        },
+        /**
+         * Get the current counter
+         */
+        async getNextSequence() {
+            const counter = await Axios.get(`${apiUrl}/counters?_id=anticipatedpaymentid`, {
+                headers: {
+                    Authorization: `Bearer ${sessionStorage.getItem(sessionStorageKeys.jwt)}`
+                }
+            })
+            await Axios.put(`${apiUrl}/counters/anticipatedpaymentid`, {
+                seq: counter.data[0].seq + 1
+            }, {
+                headers: {
+                    Authorization: `Bearer ${sessionStorage.getItem(sessionStorageKeys.jwt)}`
+                }
+            })
+            return counter.data[0].seq + 1
         }
     }
 }

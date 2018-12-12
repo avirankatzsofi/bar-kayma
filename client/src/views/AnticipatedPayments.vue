@@ -66,7 +66,7 @@
             >
               <template slot="items" slot-scope="props">
                 <tr @click="onRowClick(props)">
-                  <td>{{ props.item.placeInLine }}</td>
+                  <td>{{ props.item.index }}</td>
                   <td>{{ selects.statuses.find(status => status.value === props.item.status).text }}</td>
                   <td>{{ new Date(props.item.date).toLocaleDateString('he') }}</td>
                   <td>{{ props.item.amount }}</td>
@@ -353,18 +353,11 @@ export default {
         const projectFilterPassed =
           !this.filter.project ||
           this.filter.project === payment.user.projectCode;
-          // console.log(this.payment.paymentDate)
-        // const searchFilterPassed =
-        //   !this.search ||
-        //   this.filter.project === payment.user.projectCode;
-        //   console.log(!this.search)
-        // console.log(this.filteredPayments)
         return (
           statusFilterPassed &&
           startDateFilterPassed &&
           endDateFilterPassed &&
-          projectFilterPassed 
-          // searchFilterPassed
+          projectFilterPassed
         );
       });
     }

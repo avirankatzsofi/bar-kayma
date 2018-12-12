@@ -2,7 +2,6 @@
 const wkhtmltopdf = require('wkhtmltopdf');
 const fs = require('fs');
 const templatesDir = 'public/templates';
-
 /**
  * Anticipatedpayment.js controller
  *

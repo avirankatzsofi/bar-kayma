@@ -9,7 +9,7 @@
     "timestamps": true
   },
   "attributes": {
-    "placeInLine": {
+    "index": {
       "type": "integer",
       "autoIncrement": true
     },

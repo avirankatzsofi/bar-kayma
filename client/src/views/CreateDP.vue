@@ -100,7 +100,9 @@ export default {
     ]
   }),
   methods: {
-    submit() {
+    async submit() {
+        const index = await this.getNextSequence();
+        console.log(index);
       if (this.isFormValid) {
         this.submitDP(
           this.contactName,
@@ -109,7 +111,8 @@ export default {
           this.date,
           this.description,
           this.amount,
-          this.comments
+          this.comments,
+          index
         ).then(result => {
           this.isFormSubmitted = true;
           this.pdfLink = `${config.apiUrl}/dp/${result.data.id}.pdf`;
