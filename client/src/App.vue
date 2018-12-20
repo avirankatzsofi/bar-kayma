@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-navigation-drawer 
+    <v-navigation-drawer
       v-if="displayFrame"
       persistent
       right
@@ -25,13 +25,21 @@
       </v-list>
     </v-navigation-drawer>
     <v-toolbar app v-if="displayFrame">
-        <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-        <v-toolbar-title v-text="title"></v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-btn :loading="canSave === null" flat icon color="secondary" :disabled="!canSave" v-if="isSaveVisible" @click="onSave">
-          <v-icon>{{canSave ? 'save' : 'done'}}</v-icon>
-        </v-btn>
-        {{uFullName}}
+      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+      <v-toolbar-title v-text="title"></v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn
+        :loading="canSave === null"
+        flat
+        icon
+        color="secondary"
+        :disabled="!canSave"
+        v-if="isSaveVisible"
+        @click="onSave"
+      >
+        <v-icon>{{canSave ? 'save' : 'done'}}</v-icon>
+      </v-btn>
+      {{uFullName}}
     </v-toolbar>
     <v-content>
       <router-view @canSaveChanged="setCanSave" ref="routerView"/>
@@ -48,8 +56,8 @@
 </style>
 
 <script>
-import ApiConsumer from './mixins/apiconsumer.mixin';
-import config from './config.json';
+import ApiConsumer from "./mixins/apiconsumer.mixin";
+import config from "./config.json";
 
 const sessionStorageKeys = config.sessionStorageKeys;
 
@@ -60,13 +68,19 @@ export default {
      * Should title bar and navigation drawer be displayed
      */
     displayFrame() {
-      return this.$route.path != '/signin';
+      return this.$route.path != "/signin";
     },
     /**
      * Should save button be visible
      */
     isSaveVisible() {
-      return this.$route.path == "/anticipated-payments" && sessionStorage.getItem(sessionStorageKeys.uIsSystemManager) == "true";
+      return (
+        this.$route.path == "/anticipated-payments" &&
+        sessionStorage.getItem(sessionStorageKeys.uIsSystemManager) == "true"
+      );
+    },
+    uFullName() {
+      return this.displayFrame ? sessionStorage.getItem(sessionStorageKeys.uFullName) : null;
     }
   },
   data() {
@@ -77,15 +91,14 @@ export default {
         {
           icon: "account_balance_wallet",
           title: "הכנסות",
-          route: 'anticipated-payments'
+          route: "anticipated-payments"
         },
         {
           icon: "insert_drive_file",
           title: "דרישת תשלום חדשה",
-          route: 'create-dp'
+          route: "create-dp"
         }
       ],
-      uFullName: sessionStorage.getItem(sessionStorageKeys.uFullName),
       right: true,
       title: "בנקיימא"
     };
@@ -106,9 +119,9 @@ export default {
     }
   },
   mounted() {
-    if (sessionStorage.getItem('jwt') == null) {
+    if (sessionStorage.getItem("jwt") == null) {
       this.$router.push("signin");
-    } 
+    }
   },
   mixins: [ApiConsumer]
 };
