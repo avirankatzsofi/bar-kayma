@@ -11,7 +11,8 @@
   "attributes": {
     "index": {
       "type": "integer",
-      "autoIncrement": true
+      "autoIncrement": true,
+      "unique": true
     },
     "recipientName": {
       "type": "string",
