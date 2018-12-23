@@ -30,6 +30,7 @@
       <v-spacer></v-spacer>
       <div v-if="isAnticipatedPaymentActionsVisible">
         <v-btn
+          v-if="uIsSystemManager"
           :loading="canSave === null"
           flat
           icon
@@ -81,8 +82,10 @@ export default {
      * Should anticipated payments buttons be visible
      */
     isAnticipatedPaymentActionsVisible() {
+      return this.$route.path == "/anticipated-payments";
+    },
+    uIsSystemManager() {
       return (
-        this.$route.path == "/anticipated-payments" &&
         sessionStorage.getItem(sessionStorageKeys.uIsSystemManager) == "true"
       );
     },
