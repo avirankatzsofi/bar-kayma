@@ -60,7 +60,6 @@
               :headers="headers"
               :items="filteredPayments"
               class="responsive-table"
-              :search="filter.search"
               :rows-per-page-items="[10]"
               no-results-text="לא נמצאו תשלומים"
             >
@@ -238,7 +237,6 @@ export default {
         ],
         accountNumbers: null
       },
-      search: "",
       startDateMenu: null,
       endDateMenu: null,
       paymentDateMenu: null,
@@ -394,11 +392,19 @@ export default {
         const projectFilterPassed =
           !this.filter.project ||
           this.filter.project === payment.user.projectCode;
+        const searchFilterPassed =
+          !this.filter.search ||
+          Object.keys(payment).some(
+            key =>
+              payment[key] &&
+              payment[key].toString().includes(this.filter.search)
+          );
         return (
           statusFilterPassed &&
           startDateFilterPassed &&
           endDateFilterPassed &&
-          projectFilterPassed
+          projectFilterPassed &&
+          searchFilterPassed
         );
       });
     }
