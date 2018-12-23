@@ -201,9 +201,8 @@ export default {
     return {
       project: sessionStorage.getItem(config.sessionStorageKeys.uProject),
       apiUrl: config.apiUrl,
-
       headers: [
-        { text: "", value: "" },
+        { text: "מזהה", value: "index" },
         { text: "סטטוס", value: "status" },
         { text: "תאריך", value: "date" },
         { text: "סכום דרישה (₪)", value: "amount" },
@@ -288,6 +287,48 @@ export default {
       this.paymentsDelta = {};
       this.payments = (await this.getAnticipatedPayments()).data;
       this.$emit("canSaveChanged", false);
+    },
+    /**
+     * Exports anticipated payments to CSV file
+     */
+    exportToCsv() {
+      /**
+       *
+       * @type {{field: string, displayName: string}[]}
+       */
+      const headers = config.anticipatedPaymentCsvFields;
+      const replacer = (key, value) => (value == null ? "" : value); // specify how you want to handle null values here
+      let csv = this.payments.map(row =>
+        headers
+          .map(header => {
+            let value = false;
+            for (const field of header.field.split(".")) {
+              value = value ? value[field] : row[field];
+            }
+            return JSON.stringify(value, replacer);
+          })
+          .join(",")
+      );
+      csv.unshift(headers.map(header => header.displayName).join(","));
+      csv = csv.join("\n");
+      this.download("incomes.csv", csv);
+    },
+    /**
+     * Downloads a file
+     * @param {string} filename the designated filename (e.g. incomes.csv)
+     * @param {string} text the content of the file
+     */
+    download(filename, text) {
+      var element = document.createElement("a");
+      element.setAttribute(
+        "href",
+        "data:text/plain;charset=utf-8," + encodeURIComponent(text)
+      );
+      element.setAttribute("download", filename);
+      element.style.display = "none";
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
     }
   },
   async mounted() {

@@ -28,18 +28,25 @@
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-toolbar-title v-text="title"></v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn
-        :loading="canSave === null"
-        flat
-        icon
-        color="secondary"
-        :disabled="!canSave"
-        v-if="isSaveVisible"
-        @click="onSave"
-      >
-        <v-icon>{{canSave ? 'save' : 'done'}}</v-icon>
-      </v-btn>
-      {{uFullName}}
+      <div v-if="isAnticipatedPaymentActionsVisible">
+        <v-btn
+          :loading="canSave === null"
+          flat
+          icon
+          color="secondary"
+          :disabled="!canSave"
+          @click="onSave"
+        >
+          <v-icon>{{canSave ? 'save' : 'done'}}</v-icon>
+        </v-btn>
+        <v-tooltip bottom>
+          <v-btn slot="activator" flat icon color="secondary" @click="onExportToCsv">
+            <v-icon>save_alt</v-icon>
+          </v-btn>
+          <span>ייצוא לקובץ CSV</span>
+        </v-tooltip>
+      </div>
+      <span class="indigo--text">{{uFullName}}</span>
     </v-toolbar>
     <v-content>
       <router-view @canSaveChanged="setCanSave" ref="routerView"/>
@@ -71,16 +78,18 @@ export default {
       return this.$route.path != "/signin";
     },
     /**
-     * Should save button be visible
+     * Should anticipated payments buttons be visible
      */
-    isSaveVisible() {
+    isAnticipatedPaymentActionsVisible() {
       return (
         this.$route.path == "/anticipated-payments" &&
         sessionStorage.getItem(sessionStorageKeys.uIsSystemManager) == "true"
       );
     },
     uFullName() {
-      return this.displayFrame ? sessionStorage.getItem(sessionStorageKeys.uFullName) : null;
+      return this.displayFrame
+        ? sessionStorage.getItem(sessionStorageKeys.uFullName)
+        : null;
     }
   },
   data() {
@@ -116,6 +125,12 @@ export default {
      */
     onSave() {
       this.$refs.routerView.savePaymentsDelta();
+    },
+    /**
+     * Called when the user clicks the export button.
+     */
+    onExportToCsv() {
+      this.$refs.routerView.exportToCsv();
     }
   },
   mounted() {
