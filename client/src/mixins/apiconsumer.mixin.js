@@ -1,13 +1,14 @@
 import Axios from "axios";
-import * as config from '../config.json';
-
-const apiUrl = config.apiUrl;
-const sessionStorageKeys = config.sessionStorageKeys;
-const anticipatedPaymentsEndpoint = 'anticipatedpayment';
-// const counterEndpoint = 'counters';
-
+import helpersMixin from "./helpers.mixin.js";
+import { ConfigKeys, SessionStorageKeys, Endpoints } from "../constants.js";
 
 export default {
+    data() {
+        return {
+            apiUrl: this.getConfiguration(ConfigKeys.API_URL)
+        };
+    },
+    mixins: [helpersMixin],
     methods: {
         /**
          * Send a login request
@@ -16,15 +17,15 @@ export default {
          */
         async login(username, password) {
             try {
-                const result = await Axios.post(`${apiUrl}/auth/local`, {
+                const result = await Axios.post(`${this.apiUrl}/auth/local`, {
                     identifier: username,
                     password: password
                 });
-                sessionStorage.setItem(sessionStorageKeys.jwt, result.data.jwt);
-                sessionStorage.setItem(sessionStorageKeys.uid, result.data.user._id);
-                sessionStorage.setItem(sessionStorageKeys.uFullName, `${result.data.user.firstName || ''} ${result.data.user.lastName || ''}`);
-                sessionStorage.setItem(sessionStorageKeys.uProject, result.data.user.project);
-                sessionStorage.setItem(sessionStorageKeys.uIsSystemManager, ['System Manager', 'Administrator'].includes(result.data.user.role.name));
+                sessionStorage.setItem(SessionStorageKeys.JWT, result.data.jwt);
+                sessionStorage.setItem(SessionStorageKeys.UID, result.data.user._id);
+                sessionStorage.setItem(SessionStorageKeys.U_FULLNAME, `${result.data.user.firstName || ''} ${result.data.user.lastName || ''}`);
+                sessionStorage.setItem(SessionStorageKeys.U_PROJECT, result.data.user.project);
+                sessionStorage.setItem(SessionStorageKeys.U_IS_SYSTEM_MANAGER, ['System Manager', 'Administrator'].includes(result.data.user.role.name));
             } catch (reason) {
                 throw reason;
             }
@@ -39,32 +40,32 @@ export default {
          * @param {string} comments DP notes
          */
         submitDP(contact, recipientName, recipientEmail, date, description, amount, comments, index) {
-            return Axios.post(`${apiUrl}/${anticipatedPaymentsEndpoint}`, {
+            return Axios.post(`${this.apiUrl}/${Endpoints.ANTICIPATED_PAYMENT}`, {
                 contact: contact,
                 recipientName: recipientName,
-                user: sessionStorage.getItem(sessionStorageKeys.uid),
+                user: sessionStorage.getItem(SessionStorageKeys.UID),
                 recipientEmail: recipientEmail,
                 date: date,
                 description: description,
                 amount: amount,
                 comments: comments,
-                projectManager: sessionStorage.getItem(sessionStorageKeys.uFullName),
+                projectManager: sessionStorage.getItem(SessionStorageKeys.U_FULLNAME),
                 index
             }, {
-                headers: {
-                    Authorization: `Bearer ${sessionStorage.getItem(sessionStorageKeys.jwt)}`
-                }
-            });
+                    headers: {
+                        Authorization: `Bearer ${sessionStorage.getItem(SessionStorageKeys.JWT)}`
+                    }
+                });
         },
         /**
          * Get anticipated payments for current user
          */
         getAnticipatedPayments() {
-            const params = sessionStorage.getItem(sessionStorageKeys.uIsSystemManager) == 'true' ?
-                '_limit=9999' : `user=${sessionStorage.getItem(sessionStorageKeys.uid)}&_limit=9999`
-            return Axios.get(`${apiUrl}/${anticipatedPaymentsEndpoint}?${params}`, {
+            const params = sessionStorage.getItem(SessionStorageKeys.U_IS_SYSTEM_MANAGER) == 'true' ?
+                '_limit=9999' : `user=${sessionStorage.getItem(SessionStorageKeys.UID)}&_limit=9999`
+            return Axios.get(`${this.apiUrl}/${Endpoints.ANTICIPATED_PAYMENT}?${params}`, {
                 headers: {
-                    Authorization: `Bearer ${sessionStorage.getItem(sessionStorageKeys.jwt)}`
+                    Authorization: `Bearer ${sessionStorage.getItem(SessionStorageKeys.JWT)}`
                 }
             });
         },
@@ -73,9 +74,9 @@ export default {
          */
         async getAccountNumbers() {
             try {
-                const result = await Axios.get(`${apiUrl}/content-type-builder/models/${anticipatedPaymentsEndpoint}`, {
+                const result = await Axios.get(`${this.apiUrl}/content-type-builder/models/${Endpoints.ANTICIPATED_PAYMENT}`, {
                     headers: {
-                        Authorization: `Bearer ${sessionStorage.getItem(sessionStorageKeys.jwt)}`
+                        Authorization: `Bearer ${sessionStorage.getItem(SessionStorageKeys.JWT)}`
                     }
                 });
                 return result.data.model.attributes.find(attribute => attribute.name === "accountNumber").params.enum
@@ -91,9 +92,9 @@ export default {
             let failedUpdates = [];
             for (const payment of payments) {
                 try {
-                    await Axios.put(`${apiUrl}/${anticipatedPaymentsEndpoint}/${payment.id}`, payment, {
+                    await Axios.put(`${this.apiUrl}/${Endpoints.ANTICIPATED_PAYMENT}/${payment.id}`, payment, {
                         headers: {
-                            Authorization: `Bearer ${sessionStorage.getItem(sessionStorageKeys.jwt)}`
+                            Authorization: `Bearer ${sessionStorage.getItem(SessionStorageKeys.JWT)}`
                         }
                     });
                 } catch (reason) {
@@ -108,18 +109,18 @@ export default {
          * Get the current counter
          */
         async getNextSequence() {
-            const counter = await Axios.get(`${apiUrl}/counters?_id=anticipatedpaymentid`, {
+            const counter = await Axios.get(`${this.apiUrl}/${Endpoints.COUNTER}?_id=anticipatedpaymentid`, {
                 headers: {
-                    Authorization: `Bearer ${sessionStorage.getItem(sessionStorageKeys.jwt)}`
+                    Authorization: `Bearer ${sessionStorage.getItem(SessionStorageKeys.JWT)}`
                 }
             })
-            await Axios.put(`${apiUrl}/counters/anticipatedpaymentid`, {
+            await Axios.put(`${this.apiUrl}/${Endpoints.COUNTER}/anticipatedpaymentid`, {
                 seq: counter.data[0].seq + 1
             }, {
-                headers: {
-                    Authorization: `Bearer ${sessionStorage.getItem(sessionStorageKeys.jwt)}`
-                }
-            })
+                    headers: {
+                        Authorization: `Bearer ${sessionStorage.getItem(SessionStorageKeys.JWT)}`
+                    }
+                })
             return counter.data[0].seq + 1
         }
     }

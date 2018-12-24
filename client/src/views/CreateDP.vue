@@ -70,10 +70,11 @@
 
 <script>
 import ApiConsumer from "../mixins/apiconsumer.mixin";
-import * as config from "../config.json";
+import { SessionStorageKeys, ConfigKeys } from '../constants';
+import helpersMixin from '../mixins/helpers.mixin';
 export default {
   computed: {
-    project: () => sessionStorage.getItem(config.sessionStorageKeys.uProject)
+    project: () => sessionStorage.getItem(SessionStorageKeys.U_PROJECT)
   },
   data: () => ({
     contactName: "",
@@ -115,7 +116,7 @@ export default {
           index
         ).then(result => {
           this.isFormSubmitted = true;
-          this.pdfLink = `${config.apiUrl}/dp/${result.data.id}.pdf`;
+          this.pdfLink = `${this.getConfiguration(ConfigKeys.API_URL)}/dp/${result.data.id}.pdf`;
           document.querySelector("form").style.opacity = 0;
           setTimeout(() => {
             document.querySelector("form").style.height = 0;
@@ -126,7 +127,7 @@ export default {
       }
     }
   },
-  mixins: [ApiConsumer]
+  mixins: [ApiConsumer, helpersMixin]
 };
 </script>
 

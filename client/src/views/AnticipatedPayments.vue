@@ -193,13 +193,14 @@
 </template>
 <script>
 import ApiConsumer from "../mixins/apiconsumer.mixin";
-import * as config from "../config.json";
+import helpersMixin from "../mixins/helpers.mixin";
+import { ConfigKeys, SessionStorageKeys } from "../constants";
 
 export default {
   data() {
     return {
-      project: sessionStorage.getItem(config.sessionStorageKeys.uProject),
-      apiUrl: config.apiUrl,
+      project: sessionStorage.getItem(SessionStorageKeys.U_PROJECT),
+      apiUrl: this.getConfiguration(ConfigKeys.API_URL),
       headers: [
         { text: "מזהה", value: "index" },
         { text: "סטטוס", value: "status" },
@@ -241,7 +242,7 @@ export default {
       endDateMenu: null,
       paymentDateMenu: null,
       uIsSystemManager:
-        sessionStorage.getItem(config.sessionStorageKeys.uIsSystemManager) ==
+        sessionStorage.getItem(SessionStorageKeys.U_IS_SYSTEM_MANAGER) ==
         "true",
       currentExpandedPayment: null,
       paymentsDelta: {},
@@ -294,39 +295,11 @@ export default {
        *
        * @type {{field: string, displayName: string}[]}
        */
-      const headers = config.anticipatedPaymentCsvFields;
-      const replacer = (key, value) => (value == null ? "" : value); // specify how you want to handle null values here
-      let csv = this.payments.map(row =>
-        headers
-          .map(header => {
-            let value = false;
-            for (const field of header.field.split(".")) {
-              value = value ? value[field] : row[field];
-            }
-            return JSON.stringify(value, replacer);
-          })
-          .join(",")
+      const headers = this.getConfiguration(
+        ConfigKeys.ANTICIPATED_PAYMENT_CSV_FIELDS
       );
-      csv.unshift(headers.map(header => header.displayName).join(","));
-      csv = csv.join("\n");
-      this.download("incomes.csv", csv);
-    },
-    /**
-     * Downloads a file
-     * @param {string} filename the designated filename (e.g. incomes.csv)
-     * @param {string} text the content of the file
-     */
-    download(filename, text) {
-      var element = document.createElement("a");
-      element.setAttribute(
-        "href",
-        "data:text/plain;charset=utf-8," + encodeURIComponent(text)
-      );
-      element.setAttribute("download", filename);
-      element.style.display = "none";
-      document.body.appendChild(element);
-      element.click();
-      document.body.removeChild(element);
+      const csv = this.convertToCsv(this.payments, headers);
+      this.downloadFile("incomes.csv", csv);
     }
   },
   async mounted() {
@@ -409,7 +382,7 @@ export default {
       });
     }
   },
-  mixins: [ApiConsumer]
+  mixins: [ApiConsumer, helpersMixin]
 };
 </script>
 

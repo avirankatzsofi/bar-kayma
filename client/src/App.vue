@@ -65,9 +65,7 @@
 
 <script>
 import ApiConsumer from "./mixins/apiconsumer.mixin";
-import config from "./config.json";
-
-const sessionStorageKeys = config.sessionStorageKeys;
+import { SessionStorageKeys } from './constants';
 
 export default {
   name: "App",
@@ -86,12 +84,12 @@ export default {
     },
     uIsSystemManager() {
       return (
-        sessionStorage.getItem(sessionStorageKeys.uIsSystemManager) == "true"
+        sessionStorage.getItem(SessionStorageKeys.U_IS_SYSTEM_MANAGER) == "true"
       );
     },
     uFullName() {
       return this.displayFrame
-        ? sessionStorage.getItem(sessionStorageKeys.uFullName)
+        ? sessionStorage.getItem(SessionStorageKeys.U_FULLNAME)
         : null;
     }
   },

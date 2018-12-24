@@ -1,0 +1,73 @@
+{
+    "apiUrl": "http://localhost:1337",
+    "anticipatedPaymentCsvFields": [
+        {
+            "field": "index",
+            "displayName": "מזהה"
+        },
+        {
+            "field": "status",
+            "displayName": "סטטוס"
+        },
+        {
+            "field": "accountNumber",
+            "displayName": "סעיף תקציבי"
+        },
+        {
+            "field": "contact",
+            "displayName": "איש קשר"
+        },
+        {
+            "field": "recipientName",
+            "displayName": "שם נמען"
+        },
+        {
+            "field": "recipientEmail",
+            "displayName": "מייל נמען"
+        },
+        {
+            "field": "date",
+            "displayName": "תאריך דרישה"
+        },
+        {
+            "field": "paymentDate",
+            "displayName": "תאריך תשלום"
+        },
+        {
+            "field": "type",
+            "displayName": "אופן תשלום"
+        },
+        {
+            "field": "description",
+            "displayName": "תיאור"
+        },
+        {
+            "field": "amount",
+            "displayName": "סכום דרישה"
+        },
+        {
+            "field": "comments",
+            "displayName": "תגובות"
+        },
+        {
+            "field": "sumPayed",
+            "displayName": "סכום ששולם"
+        },
+        {
+            "field": "user.project",
+            "displayName": "פרויקט"
+        },
+        {
+            "field": "user.projectCode",
+            "displayName": "קוד פרויקט"
+        },
+        {
+            "field": "user.username",
+            "displayName": "שולח הדרישה"
+        },
+        {
+            "field": "receiptNumber",
+            "displayName": "מספר קבלה"
+        }
+    ]
+}
