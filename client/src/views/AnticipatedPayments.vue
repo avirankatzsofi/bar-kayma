@@ -245,6 +245,7 @@ export default {
         sessionStorage.getItem(SessionStorageKeys.U_IS_SYSTEM_MANAGER) ==
         "true",
       currentExpandedPayment: null,
+      currentExpandedRow: null,
       paymentsDelta: {},
       amountRules: [
         v => !!v || "שדה חובה",
@@ -263,8 +264,10 @@ export default {
         this.currentExpandedPayment =
           this.paymentsDelta[props.item.id] ||
           JSON.parse(JSON.stringify(props.item));
+        this.currentExpandedRow = props;
       } else {
         this.currentExpandedPayment = null;
+        this.currentExpandedRow = null;
       }
     },
     /**
@@ -286,6 +289,10 @@ export default {
       this.paymentsDelta = {};
       this.payments = (await this.getAnticipatedPayments()).data;
       this.$emit("canSaveChanged", false);
+      if (this.currentExpandedRow != null) {
+        this.currentExpandedRow.expanded = false;
+        this.currentExpandedRow = null;
+      }
     },
     /**
      * Exports anticipated payments to CSV file
