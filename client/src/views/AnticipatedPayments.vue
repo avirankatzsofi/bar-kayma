@@ -46,6 +46,15 @@
         <v-flex xs12 md12></v-flex>
         <v-flex xs12 md12></v-flex>
         <v-flex xs12 md12></v-flex>
+        <v-flex xs12 md4>
+          <h1 class="header">סה"כ שולם: {{totalPayed}} ש"ח</h1>
+        </v-flex>
+        <v-flex xs12 md4>
+          <h1 class="header">סה"כ צפוי: {{totalAnticipated}} ש"ח</h1>
+        </v-flex>
+        <v-flex xs12 md4>
+          <h1 class="header">סה"כ בוטל: {{totalCancelled}} ש"ח</h1>
+        </v-flex>
         <v-flex xs12 md12>
           <v-card>
             <v-card-title>
@@ -60,9 +69,14 @@
               :headers="headers"
               :items="filteredPayments"
               class="responsive-table"
-              :rows-per-page-items="[10]"
+              :rows-per-page-items="[30]"
               no-results-text="לא נמצאו תשלומים"
+              no-data-text="לא נמצאו תשלומים"
             >
+              <template
+                slot="pageText"
+                slot-scope="props"
+              >שורות {{ props.pageStart }} - {{ props.pageStop }} מתוך {{ props.itemsLength }}</template>
               <template slot="items" slot-scope="props">
                 <tr @click="onRowClick(props)">
                   <td>{{ props.item.index }}</td>
@@ -181,12 +195,6 @@
             </v-data-table>
           </v-card>
         </v-flex>
-        <v-flex xs12 md12></v-flex>
-        <v-flex xs12 md12></v-flex>
-        <v-flex xs12 md12></v-flex>
-        <v-flex xs12 md12>
-          <h1 class="display-1 text-sm-left">סה"כ: {{total}} ש"ח</h1>
-        </v-flex>
       </v-layout>
     </v-slide-y-transition>
   </v-container>
@@ -194,7 +202,7 @@
 <script>
 import ApiConsumer from "../mixins/apiconsumer.mixin";
 import helpersMixin from "../mixins/helpers.mixin";
-import { ConfigKeys, SessionStorageKeys } from "../constants";
+import { ConfigKeys, SessionStorageKeys, PaymentStatus } from "../constants";
 
 export default {
   data() {
@@ -224,9 +232,9 @@ export default {
       selects: {
         projects: [{ text: "הכל", value: null }],
         statuses: [
-          { value: "Payed", text: "שולם" },
-          { value: "Unpayed", text: "לא שולם" },
-          { value: "Cancelled", text: "מבוטל" }
+          { value: PaymentStatus.PAYED, text: "שולם" },
+          { value: PaymentStatus.UNPAYED, text: "לא שולם" },
+          { value: PaymentStatus.CANCELLED, text: "מבוטל" }
         ],
         paymentTypes: [
           { value: "Cheque", text: "צ'ק" },
@@ -349,8 +357,17 @@ export default {
         : null;
     },
     total() {
+      return this.filteredPayments.reduce((p1, p2) => p1 + p2.amount, 0).toFixed(2);
+    },
+    totalCancelled() {
+      return this.filteredPayments.filter(p => p.status == PaymentStatus.CANCELLED).reduce((p1, p2) => p1 + p2.amount, 0).toFixed(2);
+    },
+    totalAnticipated() {
+      return this.total - this.totalPayed;
+    },
+    totalPayed() {
       return this.filteredPayments
-        .reduce((p1, p2) => p1 + p2.amount, 0)
+        .reduce((p1, p2) => p1 + (p2.sumPayed == null ? 0 : p2.sumPayed), 0)
         .toFixed(2);
     },
     filteredPayments() {
@@ -361,13 +378,13 @@ export default {
           !this.filter.startDateISO ||
           new Date(this.filter.startDateISO) <=
             new Date(
-              this.filter.status == "Payed" ? payment.paymentDate : payment.date
+              this.filter.status == PaymentStatus.PAYED ? payment.paymentDate : payment.date
             );
         const endDateFilterPassed =
           !this.filter.endDateISO ||
           new Date(this.filter.endDateISO) >=
             new Date(
-              this.filter.status == "Payed" ? payment.paymentDate : payment.date
+              this.filter.status == PaymentStatus.PAYED ? payment.paymentDate : payment.date
             );
         const projectFilterPassed =
           !this.filter.project ||
