@@ -21,11 +21,11 @@ export default {
                     identifier: username,
                     password: password
                 });
-                sessionStorage.setItem(SessionStorageKeys.JWT, result.data.jwt);
-                sessionStorage.setItem(SessionStorageKeys.UID, result.data.user._id);
-                sessionStorage.setItem(SessionStorageKeys.U_FULLNAME, `${result.data.user.firstName || ''} ${result.data.user.lastName || ''}`);
-                sessionStorage.setItem(SessionStorageKeys.U_PROJECT, result.data.user.project);
-                sessionStorage.setItem(SessionStorageKeys.U_IS_SYSTEM_MANAGER, ['System Manager', 'Administrator'].includes(result.data.user.role.name));
+                this.setSessionStorageItem(SessionStorageKeys.JWT, result.data.jwt);
+                this.setSessionStorageItem(SessionStorageKeys.UID, result.data.user._id);
+                this.setSessionStorageItem(SessionStorageKeys.U_FULLNAME, `${result.data.user.firstName || ''} ${result.data.user.lastName || ''}`);
+                this.setSessionStorageItem(SessionStorageKeys.U_PROJECT, result.data.user.project);
+                this.setSessionStorageItem(SessionStorageKeys.U_IS_SYSTEM_MANAGER, ['System Manager', 'Administrator'].includes(result.data.user.role.name));
             } catch (reason) {
                 throw reason;
             }
@@ -38,22 +38,27 @@ export default {
          * @param {string} description DP description
          * @param {number} amount Payment sum
          * @param {string} comments DP notes
+         * @param {{id: string, firstName: string, lastName: string}} user user object - may be null
          */
-        submitDP(contact, recipientName, recipientEmail, date, description, amount, comments, index) {
+        submitDP(contact, recipientName, recipientEmail, date, description, amount, comments, index, user) {
+            const uid = user == null ? this.getSessionStorageItem(SessionStorageKeys.UID) : user.id;
+            const projectManager = user == null
+                ? this.getSessionStorageItem(SessionStorageKeys.U_FULLNAME)
+                : `${user.firstName == null ? '' : user.firstName} ${user.lastName == null ? '' : user.lastName}`
             return Axios.post(`${this.apiUrl}/${Endpoints.ANTICIPATED_PAYMENT}`, {
                 contact: contact,
                 recipientName: recipientName,
-                user: sessionStorage.getItem(SessionStorageKeys.UID),
+                user: uid,
                 recipientEmail: recipientEmail,
                 date: date,
                 description: description,
                 amount: amount,
                 comments: comments,
-                projectManager: sessionStorage.getItem(SessionStorageKeys.U_FULLNAME),
+                projectManager: projectManager,
                 index
             }, {
                     headers: {
-                        Authorization: `Bearer ${sessionStorage.getItem(SessionStorageKeys.JWT)}`
+                        Authorization: `Bearer ${this.getSessionStorageItem(SessionStorageKeys.JWT)}`
                     }
                 });
         },
@@ -61,11 +66,11 @@ export default {
          * Get anticipated payments for current user
          */
         getAnticipatedPayments() {
-            const params = sessionStorage.getItem(SessionStorageKeys.U_IS_SYSTEM_MANAGER) == 'true' ?
-                '_limit=9999' : `user=${sessionStorage.getItem(SessionStorageKeys.UID)}&_limit=9999`
+            const params = this.getSessionStorageItem(SessionStorageKeys.U_IS_SYSTEM_MANAGER) == 'true' ?
+                '_limit=9999' : `user=${this.getSessionStorageItem(SessionStorageKeys.UID)}&_limit=9999`
             return Axios.get(`${this.apiUrl}/${Endpoints.ANTICIPATED_PAYMENT}?${params}`, {
                 headers: {
-                    Authorization: `Bearer ${sessionStorage.getItem(SessionStorageKeys.JWT)}`
+                    Authorization: `Bearer ${this.getSessionStorageItem(SessionStorageKeys.JWT)}`
                 }
             });
         },
@@ -76,10 +81,25 @@ export default {
             try {
                 const result = await Axios.get(`${this.apiUrl}/content-type-builder/models/${Endpoints.ANTICIPATED_PAYMENT}`, {
                     headers: {
-                        Authorization: `Bearer ${sessionStorage.getItem(SessionStorageKeys.JWT)}`
+                        Authorization: `Bearer ${this.getSessionStorageItem(SessionStorageKeys.JWT)}`
                     }
                 });
                 return result.data.model.attributes.find(attribute => attribute.name === "accountNumber").params.enum
+            } catch (reason) {
+                throw reason;
+            }
+        },
+        /**
+         * Gets all users
+         */
+        async getUsers() {
+            try {
+                const result = await Axios.get(`${this.apiUrl}/${Endpoints.USER}`, {
+                    headers: {
+                        Authorization: `Bearer ${this.getSessionStorageItem(SessionStorageKeys.JWT)}`
+                    }
+                });
+                return result.data;
             } catch (reason) {
                 throw reason;
             }
@@ -94,7 +114,7 @@ export default {
                 try {
                     await Axios.put(`${this.apiUrl}/${Endpoints.ANTICIPATED_PAYMENT}/${payment.id}`, payment, {
                         headers: {
-                            Authorization: `Bearer ${sessionStorage.getItem(SessionStorageKeys.JWT)}`
+                            Authorization: `Bearer ${this.getSessionStorageItem(SessionStorageKeys.JWT)}`
                         }
                     });
                 } catch (reason) {
@@ -111,14 +131,14 @@ export default {
         async getNextSequence() {
             const counter = await Axios.get(`${this.apiUrl}/${Endpoints.COUNTER}?_id=anticipatedpaymentid`, {
                 headers: {
-                    Authorization: `Bearer ${sessionStorage.getItem(SessionStorageKeys.JWT)}`
+                    Authorization: `Bearer ${this.getSessionStorageItem(SessionStorageKeys.JWT)}`
                 }
             })
             await Axios.put(`${this.apiUrl}/${Endpoints.COUNTER}/anticipatedpaymentid`, {
                 seq: counter.data[0].seq + 1
             }, {
                     headers: {
-                        Authorization: `Bearer ${sessionStorage.getItem(SessionStorageKeys.JWT)}`
+                        Authorization: `Bearer ${this.getSessionStorageItem(SessionStorageKeys.JWT)}`
                     }
                 })
             return counter.data[0].seq + 1

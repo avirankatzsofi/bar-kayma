@@ -10,7 +10,7 @@ export const SessionStorageKeys = Object.freeze({
     U_IS_SYSTEM_MANAGER: "uIsSystemManager"
 });
 export const Endpoints = Object.freeze({
-    USER: "user",
+    USER: "users",
     ANTICIPATED_PAYMENT: "anticipatedpayment",
     COUNTER: "counters"
 });

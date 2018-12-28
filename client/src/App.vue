@@ -66,6 +66,7 @@
 <script>
 import ApiConsumer from "./mixins/apiconsumer.mixin";
 import { SessionStorageKeys } from './constants';
+import helpersMixin from './mixins/helpers.mixin';
 
 export default {
   name: "App",
@@ -82,14 +83,9 @@ export default {
     isAnticipatedPaymentActionsVisible() {
       return this.$route.path == "/anticipated-payments";
     },
-    uIsSystemManager() {
-      return (
-        sessionStorage.getItem(SessionStorageKeys.U_IS_SYSTEM_MANAGER) == "true"
-      );
-    },
     uFullName() {
       return this.displayFrame
-        ? sessionStorage.getItem(SessionStorageKeys.U_FULLNAME)
+        ? this.getSessionStorageItem(SessionStorageKeys.U_FULLNAME)
         : null;
     }
   },
@@ -135,10 +131,10 @@ export default {
     }
   },
   mounted() {
-    if (sessionStorage.getItem("jwt") == null) {
+    if (this.getSessionStorageItem(SessionStorageKeys.JWT) == null) {
       this.$router.push("signin");
     }
   },
-  mixins: [ApiConsumer]
+  mixins: [ApiConsumer, helpersMixin]
 };
 </script>

@@ -207,7 +207,7 @@ import { ConfigKeys, SessionStorageKeys, PaymentStatus } from "../constants";
 export default {
   data() {
     return {
-      project: sessionStorage.getItem(SessionStorageKeys.U_PROJECT),
+      project: this.getSessionStorageItem(SessionStorageKeys.U_PROJECT),
       apiUrl: this.getConfiguration(ConfigKeys.API_URL),
       headers: [
         { text: "מזהה", value: "index" },
@@ -249,9 +249,6 @@ export default {
       startDateMenu: null,
       endDateMenu: null,
       paymentDateMenu: null,
-      uIsSystemManager:
-        sessionStorage.getItem(SessionStorageKeys.U_IS_SYSTEM_MANAGER) ==
-        "true",
       currentExpandedPayment: null,
       currentExpandedRow: null,
       paymentsDelta: {},

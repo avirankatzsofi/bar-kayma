@@ -1,12 +1,34 @@
 import config from "../config.json";
 import defaultConfig from "../default.config.json"
+import { SessionStorageKeys } from "../constants.js";
 /**
  * @mixin
  */
 export default {
+    computed: {
+        uIsSystemManager() {
+            return this.getSessionStorageItem(SessionStorageKeys.U_IS_SYSTEM_MANAGER) == true.toString();
+        }
+    },
     methods: {
         /**
-         * Downloads a file
+         * Get a session storage item by key
+         * @param {string} key item's key
+         * @returns {string} the item's value
+         */
+        getSessionStorageItem(key) {
+            return sessionStorage.getItem(key);
+        },
+        /**
+         * Set a session storage item
+         * @param {string} key item key
+         * @param {string} value item value
+         */
+        setSessionStorageItem(key, value) {
+            sessionStorage.setItem(key, value);
+        },
+        /**
+         * Download a file
          * @param {string} filename the designated filename (e.g. incomes.csv)
          * @param {string} text the content of the file
          */
