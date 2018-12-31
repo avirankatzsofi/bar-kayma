@@ -8,6 +8,9 @@ export default {
     computed: {
         uIsSystemManager() {
             return this.getSessionStorageItem(SessionStorageKeys.U_IS_SYSTEM_MANAGER) == true.toString();
+        },
+        uProject() {
+            return this.getSessionStorageItem(SessionStorageKeys.U_PROJECT);
         }
     },
     methods: {
@@ -26,6 +29,13 @@ export default {
          */
         setSessionStorageItem(key, value) {
             sessionStorage.setItem(key, value);
+        },
+        /**
+         * Remove an item from session storage
+         * @param {string} key session storage item key
+         */
+        removeSessionStorageItem(key) {
+            sessionStorage.removeItem(key);
         },
         /**
          * Download a file

@@ -47,7 +47,26 @@
           <span>ייצוא לקובץ CSV</span>
         </v-tooltip>
       </div>
-      <span class="indigo--text">{{uFullName}}</span>
+      <div>
+        <v-menu>
+          <v-btn flat icon color="secondary" slot="activator">
+            <v-icon>account_circle</v-icon>
+          </v-btn>
+          <v-card>
+            <v-card-title primary-title>
+              <div>
+                <h3 class="subheader mb-0 font-weight-regular indigo--text">{{uFullName}}</h3>
+                <div class="teal--text">{{uProject}}</div>
+              </div>
+            </v-card-title>
+            <v-list>
+              <v-list-tile @click="logout">
+                <v-list-tile-title>התנתק</v-list-tile-title>
+              </v-list-tile>
+            </v-list>
+          </v-card>
+        </v-menu>
+      </div>
     </v-toolbar>
     <v-content>
       <router-view @canSaveChanged="setCanSave" ref="routerView"/>
@@ -65,8 +84,8 @@
 
 <script>
 import ApiConsumer from "./mixins/apiconsumer.mixin";
-import { SessionStorageKeys } from './constants';
-import helpersMixin from './mixins/helpers.mixin';
+import { SessionStorageKeys } from "./constants";
+import helpersMixin from "./mixins/helpers.mixin";
 
 export default {
   name: "App",
@@ -128,6 +147,13 @@ export default {
      */
     onExportToCsv() {
       this.$refs.routerView.exportToCsv();
+    },
+    /**
+     * Removes the JWT and redirects to sign in view
+     */
+    logout() {
+      this.removeSessionStorageItem(SessionStorageKeys.JWT);
+      this.$router.push("/signin");
     }
   },
   mounted() {
