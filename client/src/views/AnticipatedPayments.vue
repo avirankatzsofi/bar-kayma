@@ -186,7 +186,15 @@
                           :disabled="!uIsSystemManager"
                         ></v-text-field>
                       </v-flex>
-                      <v-flex xs12 md3></v-flex>
+                      <v-flex xs12 md3>
+                        <v-text-field
+                          slot="activator"
+                          v-model="props.item.contact"
+                          @blur="onPaymentEdited"
+                          label="איש קשר"
+                          :disabled="!uIsSystemManager"
+                        ></v-text-field>
+                      </v-flex>
                       <v-flex xs12 md3></v-flex>
                     </v-layout>
                   </v-card-text>
