@@ -228,15 +228,15 @@
         project: this.getSessionStorageItem(SessionStorageKeys.U_PROJECT),
         apiUrl: this.getConfiguration(ConfigKeys.API_URL),
         headers: [
-          {text: "מזהה", value: "index"},
-          {text: "סטטוס", value: "status"},
-          {text: "תאריך", value: "date"},
-          {text: "סכום דרישה (₪)", value: "amount"},
-          {text: "שם נמען", value: "recipientName"},
-          {text: "תיאור", value: "description"},
-          {text: "סכום ששולם", value: "sumPayed"},
-          {text: "תאריך תשלום", value: "paymentDate"},
-          {text: "קובץ", value: "_id"}
+          {text: "מזהה", value: "index", align: "right"},
+          {text: "סטטוס", value: "status", align: "right"},
+          {text: "תאריך", value: "date", align: "right"},
+          {text: "סכום דרישה (₪)", value: "amount", align: "right"},
+          {text: "שם נמען", value: "recipientName", align: "right"},
+          {text: "תיאור", value: "description", align: "right"},
+          {text: "סכום ששולם", value: "sumPayed", align: "right"},
+          {text: "תאריך תשלום", value: "paymentDate", align: "right"},
+          {text: "קובץ", value: "_id", align: "right"}
         ],
         payments: [],
         filter: {
@@ -294,7 +294,7 @@
         }
       },
       /**
-       * Called when the user expands and edits a paymen
+       * Called when the user expands and edits a payment
        */
       onPaymentEdited() {
         if (!this.paymentsDelta[this.currentExpandedPayment.id])
@@ -306,7 +306,7 @@
       /**
        * Sends an API call to save the payments delta
        */
-      async savePaymentsDelta() {
+      async saveDelta() {
         this.$emit("canSaveChanged", null);
         await this.updateAnticipatedPayments(Object.values(this.paymentsDelta));
         this.paymentsDelta = {};

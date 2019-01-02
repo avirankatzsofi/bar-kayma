@@ -3,8 +3,9 @@ import Router from 'vue-router';
 import SignIn from './views/SignIn.vue';
 import AnticipatedPayments from './views/AnticipatedPayments.vue';
 import CreateDP from './views/CreateDP.vue';
+import Users from "./views/Users";
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   mode: 'history',
@@ -13,12 +14,23 @@ export default new Router({
     {
       name: 'AnticipatedPayments',
       path: '/anticipated-payments',
-      component: AnticipatedPayments
+      component: AnticipatedPayments,
+      meta: {
+        isSaveVisible: true
+      }
     },
     {
       path: '/signin',
       name: 'signin',
       component: SignIn
+    },
+    {
+      path: '/users',
+      name: 'users',
+      component: Users,
+      meta: {
+        isSaveVisible: true
+      }
     },
     {
       path: '/create-dp',

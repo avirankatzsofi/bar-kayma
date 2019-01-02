@@ -18,4 +18,15 @@ export const PaymentStatus = Object.freeze({
     PAYED: "Payed",
     UNPAYED: "Unpayed",
     CANCELLED: "Cancelled"
-})
+});
+export const UserRoles = Object.freeze({
+   AUTHENTICATED: "5b6bf54b0bce6d1c40eb920a"
+});
+export const UserFields = Object.freeze({
+    USERNAME: "username",
+    EMAIL: "email",
+    FIRST_NAME: "firstName",
+    LAST_NAME: "lastName",
+    PROJECT: "project",
+    PROJECT_CODE: "projectCode"
+});

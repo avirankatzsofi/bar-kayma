@@ -14,6 +14,7 @@
           v-for="(item, i) in items"
           :key="i"
           @click="$router.push(item.route)"
+          v-if="!item.systemManagerOnly || uIsSystemManager"
         >
           <v-list-tile-action>
             <v-icon v-html="item.icon"></v-icon>
@@ -28,9 +29,9 @@
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-toolbar-title v-text="title"></v-toolbar-title>
       <v-spacer></v-spacer>
-      <div v-if="isAnticipatedPaymentActionsVisible">
+      <div>
         <v-btn
-          v-if="uIsSystemManager"
+          v-if="isSaveVisible"
           :loading="canSave === null"
           flat
           icon
@@ -88,21 +89,10 @@ export default {
   name: "App",
   computed: {
     /**
-     * Should title bar and navigation drawer be displayed
+     * Should save button be visible
      */
-    displayFrame() {
-      return this.$route.path !== "/signin";
-    },
-    /**
-     * Should anticipated payments buttons be visible
-     */
-    isAnticipatedPaymentActionsVisible() {
-      return this.$route.path === "/anticipated-payments";
-    },
-    uFullName() {
-      return this.displayFrame
-        ? this.getSessionStorageItem(SessionStorageKeys.U_FULLNAME)
-        : null;
+    isSaveVisible() {
+      return this.$route.meta.isSaveVisible && this.uIsSystemManager;
     }
   },
   data() {
@@ -119,6 +109,12 @@ export default {
           icon: "insert_drive_file",
           title: "דרישת תשלום חדשה",
           route: "create-dp"
+        },
+        {
+          icon: "account_box",
+          title: "מנהלי פרויקטים",
+          route: "users",
+          systemManagerOnly: true
         }
       ],
       right: true,
@@ -137,7 +133,7 @@ export default {
      * Called when the user clicks the save button.
      */
     onSave() {
-      this.$refs.routerView.savePaymentsDelta();
+      this.$refs.routerView.saveDelta();
     },
     /**
      * Removes the JWT and redirects to sign in view
