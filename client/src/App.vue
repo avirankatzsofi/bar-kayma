@@ -40,12 +40,6 @@
         >
           <v-icon>{{canSave ? 'save' : 'done'}}</v-icon>
         </v-btn>
-        <v-tooltip bottom>
-          <v-btn slot="activator" flat icon color="secondary" @click="onExportToCsv">
-            <v-icon>save_alt</v-icon>
-          </v-btn>
-          <span>ייצוא לקובץ CSV</span>
-        </v-tooltip>
       </div>
       <div>
         <v-menu>
@@ -74,9 +68,12 @@
   </v-app>
 </template>
 <style scoped>
+/*noinspection CssUnusedSymbol*/
 .v-toolbar__side-icon {
   margin-left: 6px !important;
 }
+
+/*noinspection CssUnusedSymbol*/
 .v-list__tile__title {
   text-align: right;
 }
@@ -94,13 +91,13 @@ export default {
      * Should title bar and navigation drawer be displayed
      */
     displayFrame() {
-      return this.$route.path != "/signin";
+      return this.$route.path !== "/signin";
     },
     /**
      * Should anticipated payments buttons be visible
      */
     isAnticipatedPaymentActionsVisible() {
-      return this.$route.path == "/anticipated-payments";
+      return this.$route.path === "/anticipated-payments";
     },
     uFullName() {
       return this.displayFrame
@@ -141,12 +138,6 @@ export default {
      */
     onSave() {
       this.$refs.routerView.savePaymentsDelta();
-    },
-    /**
-     * Called when the user clicks the export button.
-     */
-    onExportToCsv() {
-      this.$refs.routerView.exportToCsv();
     },
     /**
      * Removes the JWT and redirects to sign in view

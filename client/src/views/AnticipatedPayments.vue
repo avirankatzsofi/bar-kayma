@@ -76,7 +76,15 @@
               <template
                 slot="pageText"
                 slot-scope="props"
-              >שורות {{ props.pageStart }} - {{ props.pageStop }} מתוך {{ props.itemsLength }}</template>
+              >
+                <v-tooltip bottom>
+                  <v-btn flat icon color="primary" slot="activator" @click="exportToCsv">
+                    <v-icon>save_alt</v-icon>
+                  </v-btn>
+                  <span>יצוא לקובץ CSV</span>
+                </v-tooltip>
+                שורות {{ props.pageStart }} - {{ props.pageStop }} מתוך {{ props.itemsLength }}
+              </template>
               <template slot="items" slot-scope="props">
                 <tr @click="onRowClick(props)">
                   <td>{{ props.item.index }}</td>
@@ -86,7 +94,9 @@
                   <td>{{ props.item.recipientName }}</td>
                   <td>{{ props.item.description }}</td>
                   <td>{{ props.item.sumPayed }}</td>
-                  <td>{{ props.item.paymentDate === null ? null : new Date(props.item.paymentDate).toLocaleDateString('he')}}</td>
+                  <td>{{ props.item.paymentDate === null ? null : new
+                    Date(props.item.paymentDate).toLocaleDateString('he')}}
+                  </td>
                   <td>
                     <a :href="apiUrl + '/dp/' + props.item._id + '.pdf'" target="blank">כניסה לקובץ</a>
                   </td>
@@ -208,231 +218,235 @@
   </v-container>
 </template>
 <script>
-import ApiConsumer from "../mixins/apiconsumer.mixin";
-import helpersMixin from "../mixins/helpers.mixin";
-import { ConfigKeys, SessionStorageKeys, PaymentStatus } from "../constants";
+  import ApiConsumer from "../mixins/apiconsumer.mixin";
+  import helpersMixin from "../mixins/helpers.mixin";
+  import {ConfigKeys, SessionStorageKeys, PaymentStatus} from "../constants";
 
-export default {
-  data() {
-    return {
-      project: this.getSessionStorageItem(SessionStorageKeys.U_PROJECT),
-      apiUrl: this.getConfiguration(ConfigKeys.API_URL),
-      headers: [
-        { text: "מזהה", value: "index" },
-        { text: "סטטוס", value: "status" },
-        { text: "תאריך", value: "date" },
-        { text: "סכום דרישה (₪)", value: "amount" },
-        { text: "שם נמען", value: "recipientName" },
-        { text: "תיאור", value: "description" },
-        { text: "סכום ששולם", value: "sumPayed" },
-        { text: "תאריך תשלום", value: "paymentDate" },
-        { text: "קובץ", value: "_id" }
-      ],
-      payments: [],
-      filter: {
-        startDateISO: null,
-        endDateISO: null,
-        status: null,
-        startDateFormatted: "",
-        project: null,
-        search: null
-      },
-      selects: {
-        projects: [{ text: "הכל", value: null }],
-        statuses: [
-          { value: PaymentStatus.PAYED, text: "שולם" },
-          { value: PaymentStatus.UNPAYED, text: "לא שולם" },
-          { value: PaymentStatus.CANCELLED, text: "מבוטל" }
+  export default {
+    data() {
+      return {
+        project: this.getSessionStorageItem(SessionStorageKeys.U_PROJECT),
+        apiUrl: this.getConfiguration(ConfigKeys.API_URL),
+        headers: [
+          {text: "מזהה", value: "index"},
+          {text: "סטטוס", value: "status"},
+          {text: "תאריך", value: "date"},
+          {text: "סכום דרישה (₪)", value: "amount"},
+          {text: "שם נמען", value: "recipientName"},
+          {text: "תיאור", value: "description"},
+          {text: "סכום ששולם", value: "sumPayed"},
+          {text: "תאריך תשלום", value: "paymentDate"},
+          {text: "קובץ", value: "_id"}
         ],
-        paymentTypes: [
-          { value: "Cheque", text: "צ'ק" },
-          { value: "Bank Transfer", text: "העברה בנקאית" },
-          { value: "Cash", text: "מזומן" },
-          { value: "Defrayal", text: "סליקה" },
-          { value: "Eventer", text: "Eventer" },
-          { value: "Other", text: "אחר" }
-        ],
-        accountNumbers: null
-      },
-      startDateMenu: null,
-      endDateMenu: null,
-      paymentDateMenu: null,
-      currentExpandedPayment: null,
-      currentExpandedRow: null,
-      paymentsDelta: {},
-      amountRules: [
-        v => !!v || "שדה חובה",
-        v => /^\d+(\.\d{1,2})?$/.test(v) || "סכום לא תקין"
-      ]
-    };
-  },
-  methods: {
-    /**
-     * Called when a row is clicked.
-     * @param {any} props props object of the clicked row, which contains the payment object and the expanded state
-     */
-    onRowClick(props) {
-      props.expanded = !props.expanded;
-      if (props.expanded) {
-        this.currentExpandedPayment =
-          this.paymentsDelta[props.item.id] ||
-          JSON.parse(JSON.stringify(props.item));
-        this.currentExpandedRow = props;
-      } else {
-        this.currentExpandedPayment = null;
-        this.currentExpandedRow = null;
-      }
+        payments: [],
+        filter: {
+          startDateISO: null,
+          endDateISO: null,
+          status: null,
+          startDateFormatted: "",
+          project: null,
+          search: null
+        },
+        selects: {
+          projects: [{text: "הכל", value: null}],
+          statuses: [
+            {value: PaymentStatus.PAYED, text: "שולם"},
+            {value: PaymentStatus.UNPAYED, text: "לא שולם"},
+            {value: PaymentStatus.CANCELLED, text: "מבוטל"}
+          ],
+          paymentTypes: [
+            {value: "Cheque", text: "צ'ק"},
+            {value: "Bank Transfer", text: "העברה בנקאית"},
+            {value: "Cash", text: "מזומן"},
+            {value: "Defrayal", text: "סליקה"},
+            {value: "Eventer", text: "Eventer"},
+            {value: "Other", text: "אחר"}
+          ],
+          accountNumbers: null
+        },
+        startDateMenu: null,
+        endDateMenu: null,
+        paymentDateMenu: null,
+        currentExpandedPayment: null,
+        currentExpandedRow: null,
+        paymentsDelta: {},
+        amountRules: [
+          v => !!v || "שדה חובה",
+          v => /^\d+(\.\d{1,2})?$/.test(v) || "סכום לא תקין"
+        ]
+      };
     },
-    /**
-     * Called when the user expands and edits a paymen
-     */
-    onPaymentEdited() {
-      if (!this.paymentsDelta[this.currentExpandedPayment.id])
-        this.paymentsDelta[
-          this.currentExpandedPayment.id
-        ] = this.currentExpandedPayment;
-      this.$emit("canSaveChanged", true);
-    },
-    /**
-     * Sends an API call to save the payments delta
-     */
-    async savePaymentsDelta() {
-      this.$emit("canSaveChanged", null);
-      await this.updateAnticipatedPayments(Object.values(this.paymentsDelta));
-      this.paymentsDelta = {};
-      this.payments = (await this.getAnticipatedPayments()).data;
-      this.$emit("canSaveChanged", false);
-      if (this.currentExpandedRow != null) {
-        this.currentExpandedRow.expanded = false;
-        this.currentExpandedRow = null;
-      }
-    },
-    /**
-     * Exports anticipated payments to CSV file
-     */
-    exportToCsv() {
+    methods: {
       /**
-       *
-       * @type {{field: string, displayName: string}[]}
+       * Called when a row is clicked.
+       * @param {props} props props object of the clicked row, which contains the payment object and the expanded state
        */
-      const headers = this.getConfiguration(
-        ConfigKeys.ANTICIPATED_PAYMENT_CSV_FIELDS
-      );
-      const csv = this.convertToCsv(this.payments, headers);
-      this.downloadFile("incomes.csv", csv);
-    }
-  },
-  async mounted() {
-    this.$emit("canSaveChanged", false);
-    this.payments = (await this.getAnticipatedPayments()).data;
-    if (this.uIsSystemManager) {
-      let uniqueProjects = {};
-      this.payments.forEach(payment => {
-        const project = payment.user.project;
-        const projectCode = payment.user.projectCode;
-        if (!uniqueProjects[projectCode]) {
-          uniqueProjects[projectCode] = true;
-          this.selects.projects.push({
-            text: project,
-            value: projectCode
-          });
+      onRowClick(props) {
+        props.expanded = !props.expanded;
+        if (props.expanded) {
+          this.currentExpandedPayment =
+            this.paymentsDelta[props.item.id] ||
+            JSON.parse(JSON.stringify(props.item));
+          this.currentExpandedRow = props;
+        } else {
+          this.currentExpandedPayment = null;
+          this.currentExpandedRow = null;
         }
-      });
-      this.selects.accountNumbers = await this.getAccountNumbers();
-    }
-  },
-  computed: {
-    endDateFormatted() {
-      return (
-        this.filter.endDateISO &&
-        new Date(this.filter.endDateISO).toLocaleDateString("he-IL")
-      );
+      },
+      /**
+       * Called when the user expands and edits a paymen
+       */
+      onPaymentEdited() {
+        if (!this.paymentsDelta[this.currentExpandedPayment.id])
+          this.paymentsDelta[
+            this.currentExpandedPayment.id
+            ] = this.currentExpandedPayment;
+        this.$emit("canSaveChanged", true);
+      },
+      /**
+       * Sends an API call to save the payments delta
+       */
+      async savePaymentsDelta() {
+        this.$emit("canSaveChanged", null);
+        await this.updateAnticipatedPayments(Object.values(this.paymentsDelta));
+        this.paymentsDelta = {};
+        this.payments = (await this.getAnticipatedPayments()).data;
+        this.$emit("canSaveChanged", false);
+        if (this.currentExpandedRow != null) {
+          this.currentExpandedRow.expanded = false;
+          this.currentExpandedRow = null;
+        }
+      },
+      /**
+       * Exports anticipated payments to CSV file
+       */
+      exportToCsv() {
+        /**
+         *
+         * @type {{field: string, displayName: string}[]}
+         */
+        const headers = this.getConfiguration(
+          ConfigKeys.ANTICIPATED_PAYMENT_CSV_FIELDS
+        );
+        const csv = this.convertToCsv(this.payments, headers);
+        this.downloadFile("incomes.csv", csv);
+      }
     },
-    startDateFormatted() {
-      return (
-        this.filter.startDateISO &&
-        new Date(this.filter.startDateISO).toLocaleDateString("he-IL")
-      );
+    async mounted() {
+      this.$emit("canSaveChanged", false);
+      this.payments = (await this.getAnticipatedPayments()).data;
+      if (this.uIsSystemManager) {
+        let uniqueProjects = {};
+        this.payments.forEach(payment => {
+          const project = payment.user.project;
+          const projectCode = payment.user.projectCode;
+          if (!uniqueProjects[projectCode]) {
+            uniqueProjects[projectCode] = true;
+            this.selects.projects.push({
+              text: project,
+              value: projectCode
+            });
+          }
+        });
+        this.selects.accountNumbers = await this.getAccountNumbers();
+      }
     },
-    currentExpandedPaymentDateFormatted() {
-      return this.currentExpandedPayment.paymentDate
-        ? new Date(this.currentExpandedPayment.paymentDate).toLocaleDateString(
+    computed: {
+      endDateFormatted() {
+        return (
+          this.filter.endDateISO &&
+          new Date(this.filter.endDateISO).toLocaleDateString("he-IL")
+        );
+      },
+      startDateFormatted() {
+        return (
+          this.filter.startDateISO &&
+          new Date(this.filter.startDateISO).toLocaleDateString("he-IL")
+        );
+      },
+      currentExpandedPaymentDateFormatted() {
+        return this.currentExpandedPayment.paymentDate
+          ? new Date(this.currentExpandedPayment.paymentDate).toLocaleDateString(
             "he"
           )
-        : null;
-    },
-    total() {
-      return this.filteredPayments.reduce((p1, p2) => p1 + p2.amount, 0).toFixed(2);
-    },
-    totalCancelled() {
-      return this.filteredPayments.filter(p => p.status == PaymentStatus.CANCELLED).reduce((p1, p2) => p1 + p2.amount, 0).toFixed(2);
-    },
-    totalAnticipated() {
-      return this.total - this.totalPayed;
-    },
-    totalPayed() {
-      return this.filteredPayments
-        .reduce((p1, p2) => p1 + (p2.sumPayed == null ? 0 : p2.sumPayed), 0)
-        .toFixed(2);
-    },
-    filteredPayments() {
-      return this.payments.filter(payment => {
-        const statusFilterPassed =
-          !this.filter.status || payment.status == this.filter.status;
-        const startDateFilterPassed =
-          !this.filter.startDateISO ||
-          new Date(this.filter.startDateISO) <=
+          : null;
+      },
+      total() {
+        return this.filteredPayments.reduce((p1, p2) => p1 + p2.amount, 0).toFixed(2);
+      },
+      totalCancelled() {
+        return this.filteredPayments.filter(p => p.status === PaymentStatus.CANCELLED).reduce((p1, p2) => p1 + p2.amount, 0).toFixed(2);
+      },
+      totalAnticipated() {
+        return this.total - this.totalPayed;
+      },
+      totalPayed() {
+        return this.filteredPayments
+          .reduce((p1, p2) => p1 + (p2.sumPayed == null ? 0 : p2.sumPayed), 0)
+          .toFixed(2);
+      },
+      filteredPayments() {
+        return this.payments.filter(payment => {
+          const statusFilterPassed =
+            !this.filter.status || payment.status === this.filter.status;
+          const startDateFilterPassed =
+            !this.filter.startDateISO ||
+            new Date(this.filter.startDateISO) <=
             new Date(
-              this.filter.status == PaymentStatus.PAYED ? payment.paymentDate : payment.date
+              this.filter.status === PaymentStatus.PAYED ? payment.paymentDate : payment.date
             );
-        const endDateFilterPassed =
-          !this.filter.endDateISO ||
-          new Date(this.filter.endDateISO) >=
+          const endDateFilterPassed =
+            !this.filter.endDateISO ||
+            new Date(this.filter.endDateISO) >=
             new Date(
-              this.filter.status == PaymentStatus.PAYED ? payment.paymentDate : payment.date
+              this.filter.status === PaymentStatus.PAYED ? payment.paymentDate : payment.date
             );
-        const projectFilterPassed =
-          !this.filter.project ||
-          this.filter.project === payment.user.projectCode;
-        const searchFilterPassed =
-          !this.filter.search ||
-          Object.keys(payment).some(
-            key =>
-              payment[key] &&
-              payment[key].toString().includes(this.filter.search)
+          const projectFilterPassed =
+            !this.filter.project ||
+            this.filter.project === payment.user.projectCode;
+          const searchFilterPassed =
+            !this.filter.search ||
+            Object.keys(payment).some(
+              key =>
+                payment[key] &&
+                payment[key].toString().includes(this.filter.search)
+            );
+          return (
+            statusFilterPassed &&
+            startDateFilterPassed &&
+            endDateFilterPassed &&
+            projectFilterPassed &&
+            searchFilterPassed
           );
-        return (
-          statusFilterPassed &&
-          startDateFilterPassed &&
-          endDateFilterPassed &&
-          projectFilterPassed &&
-          searchFilterPassed
-        );
-      });
-    }
-  },
-  mixins: [ApiConsumer, helpersMixin]
-};
+        });
+      }
+    },
+    mixins: [ApiConsumer, helpersMixin]
+  };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.responsive-table {
-  max-width: 100%;
-}
-h1,
-h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
+  .responsive-table {
+    max-width: 100%;
+  }
+
+  h1,
+  h2 {
+    font-weight: normal;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  li {
+    display: inline-block;
+    margin: 0 10px;
+  }
+
+  a {
+    color: #42b983;
+  }
 </style>
