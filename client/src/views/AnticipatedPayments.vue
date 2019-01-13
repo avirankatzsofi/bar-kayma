@@ -2,83 +2,83 @@
   <v-container fill-height>
     <v-slide-y-transition mode="out-in">
       <v-layout row wrap>
-        <v-flex xs12 md3 offset-md1>
+        <v-flex md3 offset-md1 xs12>
           <v-select
             :items="[{text: 'הכל', value: null}, ...selects.statuses]"
-            v-model="filter.status"
             label="סטטוס"
+            v-model="filter.status"
           ></v-select>
         </v-flex>
-        <v-flex xs12 md3 offset-md1>
+        <v-flex md3 offset-md1 xs12>
           <v-menu
+            :close-on-content-click="false"
+            :nudge-right="40"
+            full-width
+            lazy
+            max-width="290px"
+            min-width="290px"
+            offset-y
             ref="startDateMenu"
-            :close-on-content-click="false"
+            transition="scale-transition"
             v-model="startDateMenu"
-            :nudge-right="40"
-            lazy
-            transition="scale-transition"
-            offset-y
-            full-width
-            max-width="290px"
-            min-width="290px"
           >
-            <v-text-field slot="activator" v-model="startDateFormatted" label="מתאריך"></v-text-field>
-            <v-date-picker v-model="filter.startDateISO" no-title @input="startDateMenu = false"></v-date-picker>
+            <v-text-field label="מתאריך" slot="activator" v-model="startDateFormatted"></v-text-field>
+            <v-date-picker @input="startDateMenu = false" no-title v-model="filter.startDateISO"></v-date-picker>
           </v-menu>
         </v-flex>
-        <v-flex xs12 md3>
+        <v-flex md3 xs12>
           <v-menu
-            ref="endDateMenu"
             :close-on-content-click="false"
-            v-model="endDateMenu"
             :nudge-right="40"
-            lazy
-            transition="scale-transition"
-            offset-y
             full-width
+            lazy
             max-width="290px"
             min-width="290px"
+            offset-y
+            ref="endDateMenu"
+            transition="scale-transition"
+            v-model="endDateMenu"
           >
-            <v-text-field slot="activator" v-model="endDateFormatted" label="עד תאריך"></v-text-field>
-            <v-date-picker v-model="filter.endDateISO" no-title @input="endDateMenu = false"></v-date-picker>
+            <v-text-field label="עד תאריך" slot="activator" v-model="endDateFormatted"></v-text-field>
+            <v-date-picker @input="endDateMenu = false" no-title v-model="filter.endDateISO"></v-date-picker>
           </v-menu>
         </v-flex>
-        <v-flex xs12 md12></v-flex>
-        <v-flex xs12 md12></v-flex>
-        <v-flex xs12 md12></v-flex>
-        <v-flex xs12 md4>
+        <v-flex md12 xs12></v-flex>
+        <v-flex md12 xs12></v-flex>
+        <v-flex md12 xs12></v-flex>
+        <v-flex md4 xs12>
           <h1 class="header">סה"כ שולם: {{totalPayed}} ש"ח</h1>
         </v-flex>
-        <v-flex xs12 md4>
+        <v-flex md4 xs12>
           <h1 class="header">סה"כ צפוי: {{totalAnticipated}} ש"ח</h1>
         </v-flex>
-        <v-flex xs12 md4>
+        <v-flex md4 xs12>
           <h1 class="header">סה"כ בוטל: {{totalCancelled}} ש"ח</h1>
         </v-flex>
-        <v-flex xs12 md12>
+        <v-flex md12 xs12>
           <v-card>
             <v-card-title>
               <span v-if="!uIsSystemManager">פרויקט: {{project}}</span>
               <span v-else>
-                <v-select :items="selects.projects" v-model="filter.project" label="פרויקט"></v-select>
+                <v-select :items="selects.projects" label="פרויקט" v-model="filter.project"></v-select>
               </span>
               <v-spacer></v-spacer>
-              <v-text-field v-model="filter.search" append-icon="search" label="חיפוש" single-line></v-text-field>
+              <v-text-field append-icon="search" label="חיפוש" single-line v-model="filter.search"></v-text-field>
             </v-card-title>
             <v-data-table
               :headers="headers"
               :items="filteredPayments"
-              class="responsive-table"
               :rows-per-page-items="[30]"
-              no-results-text="לא נמצאו תשלומים"
+              class="responsive-table"
               no-data-text="לא נמצאו תשלומים"
+              no-results-text="לא נמצאו תשלומים"
             >
               <template
                 slot="pageText"
                 slot-scope="props"
               >
                 <v-tooltip bottom>
-                  <v-btn flat icon color="primary" slot="activator" @click="exportToCsv">
+                  <v-btn @click="exportToCsv" color="primary" flat icon slot="activator">
                     <v-icon>save_alt</v-icon>
                   </v-btn>
                   <span>יצוא לקובץ CSV</span>
@@ -88,6 +88,7 @@
               <template slot="items" slot-scope="props">
                 <tr @click="onRowClick(props)">
                   <td>{{ props.item.index }}</td>
+                  <td v-if="uIsSystemManager">{{ props.item.user.project }}</td>
                   <td>{{ selects.statuses.find(status => status.value === props.item.status).text }}</td>
                   <td>{{ new Date(props.item.date).toLocaleDateString('he') }}</td>
                   <td>{{ props.item.amount }}</td>
@@ -105,107 +106,107 @@
               <template slot="expand" slot-scope="props">
                 <v-card flat>
                   <v-card-text>
-                    <v-layout align-center row wrap justify-space-around>
-                      <v-flex xs12 md3>
+                    <v-layout align-center justify-space-around row wrap>
+                      <v-flex md3 xs12>
                         <v-select
+                          :disabled="!uIsSystemManager"
                           :items="selects.statuses"
-                          v-model="currentExpandedPayment.status"
                           @change="onPaymentEdited"
                           label="סטטוס"
-                          :disabled="!uIsSystemManager"
+                          v-model="currentExpandedPayment.status"
                         ></v-select>
                       </v-flex>
-                      <v-flex xs12 md3>
+                      <v-flex md3 xs12>
                         <v-text-field
-                          name="amount"
-                          label="סכום ששולם"
-                          suffix="₪"
+                          :disabled="!uIsSystemManager"
                           :rules="amountRules"
+                          @input="onPaymentEdited"
+                          label="סכום ששולם"
+                          name="amount"
+                          suffix="₪"
                           type="number"
                           v-model.number="currentExpandedPayment.sumPayed"
-                          @input="onPaymentEdited"
-                          :disabled="!uIsSystemManager"
                         ></v-text-field>
                       </v-flex>
-                      <v-flex xs12 md3>
+                      <v-flex md3 xs12>
                         <v-text-field
-                          name="receiptNumber"
+                          :disabled="!uIsSystemManager"
+                          @input="onPaymentEdited"
                           label="מספר קבלה"
                           mask="#######"
+                          name="receiptNumber"
                           v-model="currentExpandedPayment.receiptNumber"
-                          @input="onPaymentEdited"
-                          :disabled="!uIsSystemManager"
                         ></v-text-field>
                       </v-flex>
                     </v-layout>
-                    <v-layout row wrap justify-space-around>
-                      <v-flex xs12 md3>
+                    <v-layout justify-space-around row wrap>
+                      <v-flex md3 xs12>
                         <v-select
                           :disabled="!uIsSystemManager"
                           :items="selects.paymentTypes"
-                          v-model="currentExpandedPayment.type"
                           @change="onPaymentEdited"
                           label="אופן תשלום"
+                          v-model="currentExpandedPayment.type"
                         ></v-select>
                       </v-flex>
-                      <v-flex xs12 md3>
+                      <v-flex md3 xs12>
                         <v-select
                           :disabled="!uIsSystemManager"
                           :items="selects.accountNumbers"
-                          v-model="currentExpandedPayment.accountNumber"
                           @change="onPaymentEdited"
                           label="סעיף תקציבי"
+                          v-model="currentExpandedPayment.accountNumber"
                         ></v-select>
                       </v-flex>
-                      <v-flex xs12 md3>
+                      <v-flex md3 xs12>
                         <v-menu
-                          ref="paymentDateMenu"
                           :close-on-content-click="false"
-                          v-model="paymentDateMenu"
-                          :nudge-right="40"
                           :disabled="!uIsSystemManager"
-                          lazy
-                          transition="scale-transition"
-                          offset-y
+                          :nudge-right="40"
                           full-width
+                          lazy
                           max-width="290px"
                           min-width="290px"
+                          offset-y
+                          ref="paymentDateMenu"
+                          transition="scale-transition"
+                          v-model="paymentDateMenu"
                         >
                           <v-text-field
-                            slot="activator"
-                            v-model="currentExpandedPaymentDateFormatted"
+                            :disabled="!uIsSystemManager"
                             @blur="onPaymentEdited"
                             label="תאריך תשלום"
-                            :disabled="!uIsSystemManager"
+                            slot="activator"
+                            v-model="currentExpandedPaymentDateFormatted"
                           ></v-text-field>
                           <v-date-picker
-                            v-model="currentExpandedPayment.paymentDate"
-                            no-title
                             @input="paymentDateMenu = false"
+                            no-title
+                            v-model="currentExpandedPayment.paymentDate"
                           ></v-date-picker>
                         </v-menu>
                       </v-flex>
                     </v-layout>
-                    <v-layout row wrap justify-space-around>
-                      <v-flex xs12 md3>
+                    <v-layout justify-space-around row wrap>
+                      <v-flex md3 xs12>
                         <v-text-field
-                          slot="activator"
-                          v-model="props.item.recipientEmail"
+                          :disabled="!uIsSystemManager"
                           @blur="onPaymentEdited"
                           label="אימייל נמען"
-                          :disabled="!uIsSystemManager"
+                          slot="activator"
+                          v-model="props.item.recipientEmail"
                         ></v-text-field>
                       </v-flex>
-                      <v-flex xs12 md3>
+                      <v-flex md3 xs12>
                         <v-text-field
-                          slot="activator"
-                          v-model="props.item.contact"
+                          :disabled="!uIsSystemManager"
                           @blur="onPaymentEdited"
                           label="איש קשר"
-                          :disabled="!uIsSystemManager"
+                          slot="activator"
+                          v-model="props.item.contact"
                         ></v-text-field>
                       </v-flex>
-                      <v-flex xs12 md3></v-flex>
+                      <v-flex md3 xs12></v-flex>
                     </v-layout>
                   </v-card-text>
                 </v-card>
@@ -220,7 +221,7 @@
 <script>
   import ApiConsumer from "../mixins/apiconsumer.mixin";
   import helpersMixin from "../mixins/helpers.mixin";
-  import {ConfigKeys, SessionStorageKeys, PaymentStatus} from "../constants";
+  import {ConfigKeys, PaymentStatus, SessionStorageKeys} from "../constants";
 
   export default {
     data() {
@@ -328,7 +329,7 @@
         const headers = this.getConfiguration(
           ConfigKeys.ANTICIPATED_PAYMENT_CSV_FIELDS
         );
-        const csv = this.convertToCsv(this.payments, headers);
+        const csv = this.convertToCsv(this.filteredPayments, headers);
         this.downloadFile("incomes.csv", csv);
       }
     },
@@ -336,6 +337,7 @@
       this.$emit("canSaveChanged", false);
       this.payments = (await this.getAnticipatedPayments()).data;
       if (this.uIsSystemManager) {
+        this.headers.splice(1, 0, {text: "פרויקט", value: "user.project", align: "right"});
         let uniqueProjects = {};
         this.payments.forEach(payment => {
           const project = payment.user.project;
