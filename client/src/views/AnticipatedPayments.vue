@@ -336,6 +336,7 @@
     async mounted() {
       this.$emit("canSaveChanged", false);
       this.payments = (await this.getAnticipatedPayments()).data;
+      this.selects.accountNumbers = await this.getAccountNumbers();
       if (this.uIsSystemManager) {
         this.headers.splice(1, 0, {text: "פרויקט", value: "user.project", align: "right"});
         let uniqueProjects = {};
@@ -350,7 +351,6 @@
             });
           }
         });
-        this.selects.accountNumbers = await this.getAccountNumbers();
       }
     },
     computed: {
